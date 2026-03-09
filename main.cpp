@@ -1,7 +1,6 @@
 #include <GL/freeglut.h>
 #include <stdio.h>
 
-
 static void RenderSceneCB()
 {
     glClear(GL_COLOR_BUFFER_BIT);

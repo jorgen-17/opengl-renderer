@@ -1,0 +1,13 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/include/">
+    <File Path="../include/gl/freeglut.h" />
+    <File Path="../include/gl/freeglut_ext.h" />
+    <File Path="../include/gl/freeglut_std.h" />
+    <File Path="../include/gl/freeglut_ucall.h" />
+  </Folder>
+  <Project Path="opengl-renderer-vs/opengl-renderer-vs.vcxproj" />
+</Solution>

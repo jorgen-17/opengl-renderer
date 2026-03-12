@@ -4,6 +4,8 @@
 #include "ogldev_math_3d.h"
 
 GLuint VBO;
+const int numDots = 2;
+Vector3f Vertices[numDots];
 
 static void RenderSceneCB()
 {
@@ -15,7 +17,7 @@ static void RenderSceneCB()
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
-    glDrawArrays(GL_POINTS, 0, 1);
+    glDrawArrays(GL_POINTS, 0, numDots);
 
     glDisableVertexAttribArray(0);
 
@@ -24,8 +26,8 @@ static void RenderSceneCB()
 
 static void CreateVertexBuffer()
 {
-    Vector3f Vertices[1];
     Vertices[0] = Vector3f(0.0f, 0.0f, 0.0f);
+    Vertices[1] = Vector3f(0.5f, 0.5f, 0.0f);
 
     glGenBuffers(1, &VBO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
@@ -53,7 +55,7 @@ int main(int argc, char** argv)
         return 1;
     }
 
-    GLclampf Red = 0.2f, Green = 0.5f, Blue = 0.4f, Alpha = 0.0f;
+    GLclampf Red = 0.0f, Green = 0.0f, Blue = 0.0f, Alpha = 0.0f;
     glClearColor(Red, Green, Blue, Alpha);
 
     CreateVertexBuffer();

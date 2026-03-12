@@ -9,5 +9,5 @@
     <File Path="../include/gl/freeglut_std.h" />
     <File Path="../include/gl/freeglut_ucall.h" />
   </Folder>
-  <Project Path="opengl-renderer-vs/opengl-renderer-vs.vcxproj" />
+  <Project Path="opengl-renderer-vs/opengl-renderer-vs.vcxproj" Id="aaaa8c62-bed5-49d8-a2ab-3076e46e549f" />
 </Solution>

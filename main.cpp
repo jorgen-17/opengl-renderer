@@ -8,7 +8,7 @@
 #include "ogldev_math_3d.h"
 
 GLuint VBO;
-GLint gScaleLocation;
+GLint gTranslationLocation;
 const int numPoints = 3;
 Vector3f Vertices[numPoints];
 
@@ -24,7 +24,13 @@ static void RenderSceneCB()
         Delta *= -1.0f;
     }
 
-    glUniform1f(gScaleLocation, Scale);
+
+    Matrix4f Translation(1.0f, 0.0f, 0.0f, Scale * 2,
+                         0.0f, 1.0f, 0.0f, Scale,
+                         0.0f, 0.0f, 1.0f, 0.0,
+                         0.0f, 0.0f, 0.0f, 1.0f);
+
+    glUniformMatrix4fv(gTranslationLocation, 1, GL_TRUE, &Translation.m[0][0]);
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
@@ -122,9 +128,9 @@ static void CompileShaders()
         exit(1);
     }
 
-    gScaleLocation = glGetUniformLocation(ShaderProgram, "gScale");
-    if (gScaleLocation == -1) {
-        printf("Error getting uniform location of 'gScale'\n");
+    gTranslationLocation = glGetUniformLocation(ShaderProgram, "gTranslation");
+    if (gTranslationLocation == -1) {
+        printf("Error getting uniform location of 'gTranslation'\n");
         exit(1);
     }
 
@@ -150,7 +156,7 @@ int main(int argc, char** argv)
     int x = 0;
     int y = 0;
     glutInitWindowPosition(x, y);
-    int win = glutCreateWindow("Tutorial 05");
+    int win = glutCreateWindow("Tutorial 06");
     printf("window id: %d\n", win);
 
     // Must be done after glut is initialized!

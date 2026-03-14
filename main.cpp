@@ -8,28 +8,95 @@
 #include "ogldev_math_3d.h"
 
 GLuint VBO;
-GLint gRotationLocation;
+GLint gScalingLocation;
 const int numPoints = 3;
 Vector3f Vertices[numPoints];
 
-static void RenderSceneCB()
+static void ScalingExample()
 {
-    glClear(GL_COLOR_BUFFER_BIT);
+    static float Scale = 1.0f;
+    static float Delta = 0.001f;
+
+    Scale += Delta;
+    if ((Scale >= 1.5f) || (Scale <= 0.5)) {
+        Delta *= -1.0f;
+    }
+
+    Matrix4f Scaling(Scale, 0.0f,  0.0f,  0.0f,
+                     0.0f,  Scale, 0.0f,  0.0f,
+                     0.0f,  0.0f,  Scale, 0.0f,
+                     0.0f,  0.0f,  0.0f,  1.0f);
+
+    glUniformMatrix4fv(gScalingLocation, 1, GL_TRUE, &Scaling.m[0][0]);
+}
+
+static void CombiningTransformationsExample1()
+{
+    static float Scale = 1.5f;
+
+    Matrix4f Scaling(Scale, 0.0f,  0.0f,  0.0f,
+                     0.0f,  Scale, 0.0f,  0.0f,
+                     0.0f,  0.0f,  Scale, 0.0f,
+                     0.0f,  0.0f,  0.0f,  1.0f);
+
+    static float Loc = 0.0f;
+    static float Delta = 0.01f;
+
+    Loc += Delta;
+    if ((Loc >= 0.5f) || (Loc <= -0.5f)) {
+        Delta *= -1.0f;
+    }
+
+    Matrix4f Translation(1.0f, 0.0f, 0.0f, Loc,
+                         0.0f, 1.0f, 0.0f, 0.0,
+                         0.0f, 0.0f, 1.0f, 0.0,
+                         0.0f, 0.0f, 0.0f, 1.0f);
+
+    // Matrix4f FinalTransform = Translation * Scaling;
+    Matrix4f FinalTransform = Scaling * Translation;
+
+    glUniformMatrix4fv(gScalingLocation, 1, GL_TRUE, &FinalTransform.m[0][0]);
+}
+
+static void CombiningTransformationsExample2()
+{
+    static float Scale = 0.25f;
+
+    Matrix4f Scaling(Scale, 0.0f,  0.0f,  0.0f,
+                     0.0f,  Scale, 0.0f,  0.0f,
+                     0.0f,  0.0f,  Scale, 0.0f,
+                     0.0f,  0.0f,  0.0f,  1.0f);
 
     static float AngleInRadians = 0.0f;
     static float Delta = 0.01f;
 
     AngleInRadians += Delta;
-    if ((AngleInRadians >= 1.5708f) || (AngleInRadians <= -1.5708f)) {
-        Delta *= -1.0f;
-    }
 
     Matrix4f Rotation(cosf(AngleInRadians), -sinf(AngleInRadians), 0.0f, 0.0f,
                       sinf(AngleInRadians), cosf(AngleInRadians),  0.0f, 0.0f,
                       0.0,                  0.0f,                  1.0f, 0.0f,
                       0.0f,                 0.0f,                  0.0f, 1.0f);
 
-    glUniformMatrix4fv(gRotationLocation, 1, GL_TRUE, &Rotation.m[0][0]);
+    static float Loc = 0.5f;
+
+    Matrix4f Translation(1.0f, 0.0f, 0.0f, Loc,
+                         0.0f, 1.0f, 0.0f, 0.0,
+                         0.0f, 0.0f, 1.0f, 0.0,
+                         0.0f, 0.0f, 0.0f, 1.0f);
+
+    //Matrix4f FinalTransform = Translation * Rotation * Scaling;
+    Matrix4f FinalTransform = Rotation * Translation * Scaling;
+
+    glUniformMatrix4fv(gScalingLocation, 1, GL_TRUE, &FinalTransform.m[0][0]);
+}
+
+static void RenderSceneCB()
+{
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // ScalingExample();
+    // CombiningTransformationsExample1();
+    CombiningTransformationsExample2();
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
@@ -127,9 +194,9 @@ static void CompileShaders()
         exit(1);
     }
 
-    gRotationLocation = glGetUniformLocation(ShaderProgram, "gRotation");
-    if (gRotationLocation == -1) {
-        printf("Error getting uniform location of 'gRotation'\n");
+    gScalingLocation = glGetUniformLocation(ShaderProgram, "gScaling");
+    if (gScalingLocation == -1) {
+        printf("Error getting uniform location of 'gScaling'\n");
         exit(1);
     }
 
@@ -155,7 +222,7 @@ int main(int argc, char** argv)
     int x = 0;
     int y = 0;
     glutInitWindowPosition(x, y);
-    int win = glutCreateWindow("Tutorial 07");
+    int win = glutCreateWindow("Tutorial 08");
     printf("window id: %d\n", win);
 
     // Must be done after glut is initialized!

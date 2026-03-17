@@ -38,8 +38,8 @@
 #include <assimp/matrix3x3.h>
 #include <assimp/matrix4x4.h>
 
-#include <glm/glm.hpp>
-#include <glm/ext.hpp>
+#include "glm/glm.hpp"
+#include "glm/ext.hpp"
 
 // powf wrapper for integer params to avoid crazy casting
 #define powi(base,exp) (int)powf((float)(base), (float)(exp))

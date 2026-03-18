@@ -34,9 +34,9 @@
 
 #include "ogldev_util.h"
 
-#include <assimp/vector3.h>
-#include <assimp/matrix3x3.h>
-#include <assimp/matrix4x4.h>
+#include "assimp5/assimp/vector3.h"
+#include "assimp5/assimp/matrix3x3.h"
+#include "assimp5/assimp/matrix4x4.h"
 
 #include "glm/glm.hpp"
 #include "glm/ext.hpp"

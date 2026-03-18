@@ -29,7 +29,7 @@
 #include <assert.h>
 #include <time.h>
 #ifndef OGLDEV_VULKAN
-#include <GL/glew.h>
+#include "GL/glew.h"
 #endif
 #include "ogldev_types.h"
 

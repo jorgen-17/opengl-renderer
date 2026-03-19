@@ -8,9 +8,13 @@
 #include "ogldev_pipeline.h"
 #include "ogldev_math_3d.h"
 
+#define WINDOW_WIDTH 2560
+#define WINDOW_HEIGHT 1600
+
 GLuint VBO;
 GLuint IBO;
 GLuint gWorldLocation;
+PersProjInfo gPersProjInfo;
 
 const char* pVSFileName = "shader.vs";
 const char* pFSFileName = "shader.fs";
@@ -21,14 +25,14 @@ static void RenderSceneCB()
 
     static float Scale = 0.0f;
 
-    Scale += 0.001f;
+    Scale += 0.1f;
 
     Pipeline p;
-    p.Scale(sinf(Scale * 0.1f), sinf(Scale * 0.1f), sinf(Scale * 0.1f));
-    p.WorldPos(sinf(Scale), 0.0f, 0.0f);
-    p.Rotate(sinf(Scale) * 90.0f, sinf(Scale) * 90.0f, sinf(Scale) * 90.0f);
+    p.WorldPos(0.0f, 0.0f, 5.0f);
+    p.Rotate(0.0f, Scale, 0.0f);
+    p.SetPerspectiveProj(gPersProjInfo);
 
-    glUniformMatrix4fv(gWorldLocation, 1, GL_TRUE, (const GLfloat*)p.GetWorldTrans());
+    glUniformMatrix4fv(gWorldLocation, 1, GL_TRUE, (const GLfloat*)p.GetWPTrans());
 
     glEnableVertexAttribArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
@@ -151,9 +155,9 @@ int main(int argc, char** argv)
 {
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGBA|GLUT_DEPTH);
-    glutInitWindowSize(2560, 1600);
+    glutInitWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);
     glutInitWindowPosition(0, 0);
-    glutCreateWindow("Tutorial 11");
+    glutCreateWindow("Tutorial 12");
 
     InitializeGlutCallbacks();
 
@@ -172,6 +176,12 @@ int main(int argc, char** argv)
     CreateIndexBuffer();
 
     CompileShaders();
+
+    gPersProjInfo.FOV = 50.0f;
+    gPersProjInfo.Height = WINDOW_HEIGHT;
+    gPersProjInfo.Width = WINDOW_WIDTH;
+    gPersProjInfo.zNear = 1.0f;
+    gPersProjInfo.zFar = 100.0f;
 
     glutMainLoop();
 

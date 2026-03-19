@@ -146,6 +146,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\common\camera.cpp" />
+    <ClCompile Include="..\..\common\glut_backend.cpp" />
     <ClCompile Include="..\..\common\math_3d.cpp" />
     <ClCompile Include="..\..\common\ogldev_atb.cpp" />
     <ClCompile Include="..\..\common\ogldev_util.cpp" />

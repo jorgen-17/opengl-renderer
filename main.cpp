@@ -7,9 +7,11 @@
 
 #include "ogldev_pipeline.h"
 #include "ogldev_math_3d.h"
+#include "ogldev_glut_backend.h"
 
 #define WINDOW_WIDTH 2560
 #define WINDOW_HEIGHT 1600
+// #define DEBUG
 
 GLuint VBO;
 GLuint IBO;
@@ -31,11 +33,8 @@ static void RenderSceneCB()
 
     Pipeline p;
     p.Rotate(0.0f, Scale, 0.0f);
-    p.WorldPos(0.0f, 0.0f, 0.0f);
-    Vector3f CameraPos(0.0f, 0.0f, -5.0f);
-    Vector3f CameraTarget(0.0f, 0.0f, 2.0f);
-    Vector3f CameraUp(0.0f, 1.0f, 0.0f);
-    p.SetCamera(CameraPos, CameraTarget, CameraUp);
+    p.WorldPos(0.0f, 0.0f, 5.0f);
+    p.SetCamera(*pGameCamera);
     p.SetPerspectiveProj(gPersProjInfo);
 
     glUniformMatrix4fv(gWVPLocation, 1, GL_TRUE, (const GLfloat*)p.GetWVPTrans());
@@ -52,10 +51,23 @@ static void RenderSceneCB()
     glutSwapBuffers();
 }
 
+static void SpecialKeyboardCB(int Key, int x, int y)
+{
+#ifdef DEBUG
+    printf("userpressed key: %i ", Key);
+#endif
+    OGLDEV_KEY OgldevKey = GLUTKeyToOGLDEVKey(Key);
+#ifdef DEBUG
+    printf("mapped to OGLKEY: %i\n", OgldevKey);
+#endif
+    pGameCamera->OnKeyboard(OgldevKey);
+}
+
 static void InitializeGlutCallbacks()
 {
     glutDisplayFunc(RenderSceneCB);
     glutIdleFunc(RenderSceneCB);
+    glutSpecialFunc(SpecialKeyboardCB);
 }
 
 static void CreateVertexBuffer()

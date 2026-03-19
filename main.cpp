@@ -35,8 +35,7 @@ static void RenderSceneCB()
     Vector3f CameraPos(0.0f, 0.0f, -5.0f);
     Vector3f CameraTarget(0.0f, 0.0f, 2.0f);
     Vector3f CameraUp(0.0f, 1.0f, 0.0f);
-    pGameCamera = new Camera(WINDOW_WIDTH, WINDOW_HEIGHT, CameraPos, CameraTarget, CameraUp);
-    p.SetCamera(*pGameCamera);
+    p.SetCamera(CameraPos, CameraTarget, CameraUp);
     p.SetPerspectiveProj(gPersProjInfo);
 
     glUniformMatrix4fv(gWVPLocation, 1, GL_TRUE, (const GLfloat*)p.GetWVPTrans());

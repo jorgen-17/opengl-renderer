@@ -13,7 +13,9 @@
 
 GLuint VBO;
 GLuint IBO;
-GLuint gWorldLocation;
+GLuint gWVPLocation;
+
+Camera* pGameCamera = NULL;
 PersProjInfo gPersProjInfo;
 
 const char* pVSFileName = "shader.vs";
@@ -28,11 +30,16 @@ static void RenderSceneCB()
     Scale += 0.1f;
 
     Pipeline p;
-    p.WorldPos(0.0f, 0.0f, 5.0f);
     p.Rotate(0.0f, Scale, 0.0f);
+    p.WorldPos(0.0f, 0.0f, 0.0f);
+    Vector3f CameraPos(0.0f, 0.0f, -5.0f);
+    Vector3f CameraTarget(0.0f, 0.0f, 2.0f);
+    Vector3f CameraUp(0.0f, 1.0f, 0.0f);
+    pGameCamera = new Camera(WINDOW_WIDTH, WINDOW_HEIGHT, CameraPos, CameraTarget, CameraUp);
+    p.SetCamera(*pGameCamera);
     p.SetPerspectiveProj(gPersProjInfo);
 
-    glUniformMatrix4fv(gWorldLocation, 1, GL_TRUE, (const GLfloat*)p.GetWPTrans());
+    glUniformMatrix4fv(gWVPLocation, 1, GL_TRUE, (const GLfloat*)p.GetWVPTrans());
 
     glEnableVertexAttribArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
@@ -55,9 +62,9 @@ static void InitializeGlutCallbacks()
 static void CreateVertexBuffer()
 {
     Vector3f Vertices[4];
-    Vertices[0] = Vector3f(-1.0f, -1.0f, 0.0f);
-    Vertices[1] = Vector3f(0.0f, -1.0f, 1.0f);
-    Vertices[2] = Vector3f(1.0f, -1.0f, 0.0f);
+    Vertices[0] = Vector3f(-1.0f, -1.0f, 0.5773f);
+    Vertices[1] = Vector3f(0.0f, -1.0f, -1.15475f);
+    Vertices[2] = Vector3f(1.0f, -1.0f, 0.5773f);
     Vertices[3] = Vector3f(0.0f, 1.0f, 0.0f);
 
     glGenBuffers(1, &VBO);
@@ -147,8 +154,8 @@ static void CompileShaders()
 
     glUseProgram(ShaderProgram);
 
-    gWorldLocation = glGetUniformLocation(ShaderProgram, "gWorld");
-    assert(gWorldLocation != 0xFFFFFFFF);
+    gWVPLocation = glGetUniformLocation(ShaderProgram, "gWVP");
+    assert(gWVPLocation != 0xFFFFFFFF);
 }
 
 int main(int argc, char** argv)
@@ -157,9 +164,11 @@ int main(int argc, char** argv)
     glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGBA|GLUT_DEPTH);
     glutInitWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);
     glutInitWindowPosition(0, 0);
-    glutCreateWindow("Tutorial 12");
+    glutCreateWindow("Tutorial 13");
 
     InitializeGlutCallbacks();
+
+    pGameCamera = new Camera(WINDOW_WIDTH, WINDOW_HEIGHT);
 
     // Must be done after glut is initialized!
     GLenum res = glewInit();
@@ -177,7 +186,7 @@ int main(int argc, char** argv)
 
     CompileShaders();
 
-    gPersProjInfo.FOV = 50.0f;
+    gPersProjInfo.FOV = 60.0f;
     gPersProjInfo.Height = WINDOW_HEIGHT;
     gPersProjInfo.Width = WINDOW_WIDTH;
     gPersProjInfo.zNear = 1.0f;

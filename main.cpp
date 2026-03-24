@@ -25,6 +25,8 @@ const char* pFSFileName = "shader.fs";
 
 static void RenderSceneCB()
 {
+    pGameCamera->OnRender();
+
     glClear(GL_COLOR_BUFFER_BIT);
 
     static float Scale = 0.0f;
@@ -53,14 +55,25 @@ static void RenderSceneCB()
 
 static void SpecialKeyboardCB(int Key, int x, int y)
 {
-#ifdef DEBUG
-    printf("userpressed key: %i ", Key);
-#endif
     OGLDEV_KEY OgldevKey = GLUTKeyToOGLDEVKey(Key);
-#ifdef DEBUG
-    printf("mapped to OGLKEY: %i\n", OgldevKey);
-#endif
     pGameCamera->OnKeyboard(OgldevKey);
+
+#ifdef DEBUG
+    printf("userpressed key: %i mapped to OGLKEY: %i\n", Key, OgldevKey);
+#endif
+}
+
+static void KeyboardCB(unsigned char Key, int x, int y)
+{
+    switch (Key) {
+        case 'q':
+            glutLeaveMainLoop();
+    }
+}
+
+static void PassiveMouseCB(int x, int y)
+{
+    pGameCamera->OnMouse(x, y);
 }
 
 static void InitializeGlutCallbacks()
@@ -68,6 +81,8 @@ static void InitializeGlutCallbacks()
     glutDisplayFunc(RenderSceneCB);
     glutIdleFunc(RenderSceneCB);
     glutSpecialFunc(SpecialKeyboardCB);
+    glutPassiveMotionFunc(PassiveMouseCB);
+    glutKeyboardFunc(KeyboardCB);
 }
 
 static void CreateVertexBuffer()
@@ -175,7 +190,18 @@ int main(int argc, char** argv)
     glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGBA|GLUT_DEPTH);
     glutInitWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);
     glutInitWindowPosition(0, 0);
-    glutCreateWindow("Tutorial 13");
+    glutCreateWindow("Tutorial 15");
+
+    // char game_mode_string[64];
+    // // Game mode string example: <Width>x<Height>@<BPP>
+    // snprintf(game_mode_string, sizeof(game_mode_string), "%dx%d@32", WINDOW_WIDTH, WINDOW_HEIGHT);
+    // glutGameModeString(game_mode_string);
+    // if (glutGameModeGet(GLUT_GAME_MODE_POSSIBLE)) {
+    //     printf("entering game mode %s\n", game_mode_string);
+    //     glutEnterGameMode();
+    // } else {
+    //     fprintf(stderr, "Error: Requested game mode, '%s', not available.\n", game_mode_string);
+    // }
 
     InitializeGlutCallbacks();
 

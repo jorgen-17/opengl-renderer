@@ -12,6 +12,7 @@
 #define WINDOW_WIDTH 2560
 #define WINDOW_HEIGHT 1600
 // #define DEBUG
+// #define WINDOWED
 
 GLuint VBO;
 GLuint IBO;
@@ -58,9 +59,9 @@ static void SpecialKeyboardCB(int Key, int x, int y)
     OGLDEV_KEY OgldevKey = GLUTKeyToOGLDEVKey(Key);
     pGameCamera->OnKeyboard(OgldevKey);
 
-#ifdef DEBUG
+    #ifdef DEBUG
     printf("userpressed key: %i mapped to OGLKEY: %i\n", Key, OgldevKey);
-#endif
+    #endif
 }
 
 static void KeyboardCB(unsigned char Key, int x, int y)
@@ -190,18 +191,20 @@ int main(int argc, char** argv)
     glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGBA|GLUT_DEPTH);
     glutInitWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);
     glutInitWindowPosition(0, 0);
+    #ifdef WINDOWED
     glutCreateWindow("Tutorial 15");
-
-    // char game_mode_string[64];
-    // // Game mode string example: <Width>x<Height>@<BPP>
-    // snprintf(game_mode_string, sizeof(game_mode_string), "%dx%d@32", WINDOW_WIDTH, WINDOW_HEIGHT);
-    // glutGameModeString(game_mode_string);
-    // if (glutGameModeGet(GLUT_GAME_MODE_POSSIBLE)) {
-    //     printf("entering game mode %s\n", game_mode_string);
-    //     glutEnterGameMode();
-    // } else {
-    //     fprintf(stderr, "Error: Requested game mode, '%s', not available.\n", game_mode_string);
-    // }
+    #else
+    char game_mode_string[64];
+     // Game mode string example: <Width>x<Height>@<BPP>
+     snprintf(game_mode_string, sizeof(game_mode_string), "%dx%d:32@60", WINDOW_WIDTH, WINDOW_HEIGHT);
+     glutGameModeString(game_mode_string);
+     if (glutGameModeGet(GLUT_GAME_MODE_POSSIBLE)) {
+         printf("entering game mode %s\n", game_mode_string);
+         glutEnterGameMode();
+     } else {
+         fprintf(stderr, "Error: Requested game mode, '%s', not available.\n", game_mode_string);
+     }
+    #endif
 
     InitializeGlutCallbacks();
 

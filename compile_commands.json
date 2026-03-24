@@ -1,0 +1,100 @@
+[
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-c",
+      "-I./include",
+      "-std=c++20",
+      "-o",
+      "main",
+      "main.cpp"
+    ],
+    "directory": "/home/jorge/Projects/opengl/opengl-renderer",
+    "file": "/home/jorge/Projects/opengl/opengl-renderer/main.cpp",
+    "output": "/home/jorge/Projects/opengl/opengl-renderer/main"
+  },
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-c",
+      "-I./include",
+      "-std=c++20",
+      "-o",
+      "main",
+      "./common/ogldev_util.cpp"
+    ],
+    "directory": "/home/jorge/Projects/opengl/opengl-renderer",
+    "file": "/home/jorge/Projects/opengl/opengl-renderer/common/ogldev_util.cpp",
+    "output": "/home/jorge/Projects/opengl/opengl-renderer/main"
+  },
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-c",
+      "-I./include",
+      "-std=c++20",
+      "-o",
+      "main",
+      "./common/pipeline.cpp"
+    ],
+    "directory": "/home/jorge/Projects/opengl/opengl-renderer",
+    "file": "/home/jorge/Projects/opengl/opengl-renderer/common/pipeline.cpp",
+    "output": "/home/jorge/Projects/opengl/opengl-renderer/main"
+  },
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-c",
+      "-I./include",
+      "-std=c++20",
+      "-o",
+      "main",
+      "./common/math_3d.cpp"
+    ],
+    "directory": "/home/jorge/Projects/opengl/opengl-renderer",
+    "file": "/home/jorge/Projects/opengl/opengl-renderer/common/math_3d.cpp",
+    "output": "/home/jorge/Projects/opengl/opengl-renderer/main"
+  },
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-c",
+      "-I./include",
+      "-std=c++20",
+      "-o",
+      "main",
+      "./common/camera.cpp"
+    ],
+    "directory": "/home/jorge/Projects/opengl/opengl-renderer",
+    "file": "/home/jorge/Projects/opengl/opengl-renderer/common/camera.cpp",
+    "output": "/home/jorge/Projects/opengl/opengl-renderer/main"
+  },
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-c",
+      "-I./include",
+      "-std=c++20",
+      "-o",
+      "main",
+      "./common/ogldev_atb.cpp"
+    ],
+    "directory": "/home/jorge/Projects/opengl/opengl-renderer",
+    "file": "/home/jorge/Projects/opengl/opengl-renderer/common/ogldev_atb.cpp",
+    "output": "/home/jorge/Projects/opengl/opengl-renderer/main"
+  },
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-c",
+      "-I./include",
+      "-std=c++20",
+      "-o",
+      "main",
+      "./common/glut_backend.cpp"
+    ],
+    "directory": "/home/jorge/Projects/opengl/opengl-renderer",
+    "file": "/home/jorge/Projects/opengl/opengl-renderer/common/glut_backend.cpp",
+    "output": "/home/jorge/Projects/opengl/opengl-renderer/main"
+  }
+]

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 CC=g++
-OGL_CPPFLAGS="$CPPFLAGS -I./include -std=c++20"
+OGL_CPPFLAGS="$CPPFLAGS -I./include -std=c++23"
 GLEW_LDFLAGS=`pkg-config --libs glew`
 GLUT_LDFLAGS=`pkg-config --libs glut`
 OGL_LDFLAGS="$GLEW_LDFLAGS $GLUT_LDFLAGS"

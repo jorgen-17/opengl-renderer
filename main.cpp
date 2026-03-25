@@ -13,6 +13,7 @@
 #define WINDOW_HEIGHT 1600
 // #define DEBUG
 // #define WINDOWED
+#define WSL_FS // wsl fullscreen
 
 GLuint VBO;
 GLuint IBO;
@@ -191,8 +192,12 @@ int main(int argc, char** argv)
     glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGBA|GLUT_DEPTH);
     glutInitWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);
     glutInitWindowPosition(0, 0);
+    const char* windowName = "Tutorial 15";
     #ifdef WINDOWED
-    glutCreateWindow("Tutorial 15");
+    glutCreateWindow(windowName);
+    #elifdef WSL_FS
+    glutCreateWindow(windowName);
+    glutFullScreen();
     #else
     char game_mode_string[64];
      // Game mode string example: <Width>x<Height>@<BPP>

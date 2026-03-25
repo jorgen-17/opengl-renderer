@@ -4,7 +4,7 @@
       "/usr/bin/g++",
       "-c",
       "-I./include",
-      "-std=c++20",
+      "-std=c++23",
       "-o",
       "main",
       "main.cpp"
@@ -18,7 +18,7 @@
       "/usr/bin/g++",
       "-c",
       "-I./include",
-      "-std=c++20",
+      "-std=c++23",
       "-o",
       "main",
       "./common/ogldev_util.cpp"
@@ -32,7 +32,7 @@
       "/usr/bin/g++",
       "-c",
       "-I./include",
-      "-std=c++20",
+      "-std=c++23",
       "-o",
       "main",
       "./common/pipeline.cpp"
@@ -46,7 +46,7 @@
       "/usr/bin/g++",
       "-c",
       "-I./include",
-      "-std=c++20",
+      "-std=c++23",
       "-o",
       "main",
       "./common/math_3d.cpp"
@@ -60,7 +60,7 @@
       "/usr/bin/g++",
       "-c",
       "-I./include",
-      "-std=c++20",
+      "-std=c++23",
       "-o",
       "main",
       "./common/camera.cpp"
@@ -74,7 +74,7 @@
       "/usr/bin/g++",
       "-c",
       "-I./include",
-      "-std=c++20",
+      "-std=c++23",
       "-o",
       "main",
       "./common/ogldev_atb.cpp"
@@ -88,7 +88,7 @@
       "/usr/bin/g++",
       "-c",
       "-I./include",
-      "-std=c++20",
+      "-std=c++23",
       "-o",
       "main",
       "./common/glut_backend.cpp"

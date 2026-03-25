@@ -200,15 +200,15 @@ int main(int argc, char** argv)
     glutFullScreen();
     #else
     char game_mode_string[64];
-     // Game mode string example: <Width>x<Height>@<BPP>
-     snprintf(game_mode_string, sizeof(game_mode_string), "%dx%d:32@60", WINDOW_WIDTH, WINDOW_HEIGHT);
-     glutGameModeString(game_mode_string);
-     if (glutGameModeGet(GLUT_GAME_MODE_POSSIBLE)) {
-         printf("entering game mode %s\n", game_mode_string);
-         glutEnterGameMode();
-     } else {
-         fprintf(stderr, "Error: Requested game mode, '%s', not available.\n", game_mode_string);
-     }
+    // Game mode string example: <Width>x<Height>:<BitsPerPixel>@<RefeshRate>
+    snprintf(game_mode_string, sizeof(game_mode_string), "%dx%d:32@60", WINDOW_WIDTH, WINDOW_HEIGHT);
+    glutGameModeString(game_mode_string);
+    if (glutGameModeGet(GLUT_GAME_MODE_POSSIBLE)) {
+        printf("entering game mode %s\n", game_mode_string);
+        glutEnterGameMode();
+    } else {
+        fprintf(stderr, "Error: Requested game mode, '%s', not available.\n", game_mode_string);
+    }
     #endif
 
     InitializeGlutCallbacks();

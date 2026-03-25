@@ -87,8 +87,6 @@ void Camera::Init()
     m_OnRightEdge = false;
     m_mousePos.x  = m_windowWidth / 2;
     m_mousePos.y  = m_windowHeight / 2;
-
-   // glutWarpPointer(m_mousePos.x, m_mousePos.y);
 }
 
 
@@ -131,17 +129,17 @@ bool Camera::OnKeyboard(OGLDEV_KEY Key)
             Ret = true;
         }
         break;
-        
+
     case OGLDEV_KEY_PAGE_UP:
         m_pos.y += STEP_SCALE;
         break;
-    
+
     case OGLDEV_KEY_PAGE_DOWN:
         m_pos.y -= STEP_SCALE;
         break;
-    
+
     default:
-        break;            
+        break;
     }
 
     return Ret;
@@ -161,11 +159,9 @@ void Camera::OnMouse(int x, int y)
 
     if (DeltaX == 0) {
         if (x <= MARGIN) {
-        //    m_AngleH -= 1.0f;
             m_OnLeftEdge = true;
         }
         else if (x >= (m_windowWidth - MARGIN)) {
-        //    m_AngleH += 1.0f;
             m_OnRightEdge = true;
         }
     }

@@ -105,7 +105,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>..\..\include;..\..\include\assimp5</AdditionalIncludeDirectories>
-      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard>stdcpp23</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -114,10 +114,10 @@
       <AdditionalDependencies>glew32.lib;freeglutd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
-      <Command>xcopy "..\..\shader.*" /Y</Command>
+      <Command>xcopy "..\..\shader.*" /Y &amp;&amp; xcopy "..\..\content" ".\content" /I /S /Y</Command>
     </PreBuildEvent>
     <PreBuildEvent>
-      <Message>copy over shaders</Message>
+      <Message>copy over shaders and content folder</Message>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -129,7 +129,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>..\..\include;..\..\include\assimp5</AdditionalIncludeDirectories>
-      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard>stdcpp23</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -138,10 +138,10 @@
       <AdditionalDependencies>glew32.lib;freeglut.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
-      <Command>xcopy "..\..\shader.*" /Y</Command>
+      <Command>xcopy "..\..\shader.*" /Y &amp;&amp; xcopy "..\..\content" ".\content" /I /S /Y</Command>
     </PreBuildEvent>
     <PreBuildEvent>
-      <Message>copy over shaders</Message>
+      <Message>copy over shaders and content folder</Message>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

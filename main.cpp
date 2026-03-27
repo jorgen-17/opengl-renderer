@@ -14,7 +14,7 @@
 #define WINDOW_HEIGHT 1600
 // #define DEBUG
 // #define WINDOWED
-#define WSL_FS // wsl fullscreen
+// #define WSL_FS // wsl fullscreen
 
 struct Vertex
 {

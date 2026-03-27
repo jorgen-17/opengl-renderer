@@ -2,3 +2,4 @@ main
 x64
 .vs/
 opengl-renderer-vs/**/shader.*
+opengl-renderer-vs/**/content

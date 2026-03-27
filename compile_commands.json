@@ -3,6 +3,11 @@
     "arguments": [
       "/usr/bin/g++",
       "-c",
+      "-I/usr/include/x86_64-linux-gnu/ImageMagick-6",
+      "-I/usr/include/ImageMagick-6",
+      "-fopenmp",
+      "-DMAGICKCORE_HDRI_ENABLE=0",
+      "-DMAGICKCORE_QUANTUM_DEPTH=16",
       "-I./include",
       "-std=c++23",
       "-o",
@@ -17,6 +22,11 @@
     "arguments": [
       "/usr/bin/g++",
       "-c",
+      "-I/usr/include/x86_64-linux-gnu/ImageMagick-6",
+      "-I/usr/include/ImageMagick-6",
+      "-fopenmp",
+      "-DMAGICKCORE_HDRI_ENABLE=0",
+      "-DMAGICKCORE_QUANTUM_DEPTH=16",
       "-I./include",
       "-std=c++23",
       "-o",
@@ -31,6 +41,11 @@
     "arguments": [
       "/usr/bin/g++",
       "-c",
+      "-I/usr/include/x86_64-linux-gnu/ImageMagick-6",
+      "-I/usr/include/ImageMagick-6",
+      "-fopenmp",
+      "-DMAGICKCORE_HDRI_ENABLE=0",
+      "-DMAGICKCORE_QUANTUM_DEPTH=16",
       "-I./include",
       "-std=c++23",
       "-o",
@@ -45,6 +60,11 @@
     "arguments": [
       "/usr/bin/g++",
       "-c",
+      "-I/usr/include/x86_64-linux-gnu/ImageMagick-6",
+      "-I/usr/include/ImageMagick-6",
+      "-fopenmp",
+      "-DMAGICKCORE_HDRI_ENABLE=0",
+      "-DMAGICKCORE_QUANTUM_DEPTH=16",
       "-I./include",
       "-std=c++23",
       "-o",
@@ -59,6 +79,11 @@
     "arguments": [
       "/usr/bin/g++",
       "-c",
+      "-I/usr/include/x86_64-linux-gnu/ImageMagick-6",
+      "-I/usr/include/ImageMagick-6",
+      "-fopenmp",
+      "-DMAGICKCORE_HDRI_ENABLE=0",
+      "-DMAGICKCORE_QUANTUM_DEPTH=16",
       "-I./include",
       "-std=c++23",
       "-o",
@@ -73,6 +98,11 @@
     "arguments": [
       "/usr/bin/g++",
       "-c",
+      "-I/usr/include/x86_64-linux-gnu/ImageMagick-6",
+      "-I/usr/include/ImageMagick-6",
+      "-fopenmp",
+      "-DMAGICKCORE_HDRI_ENABLE=0",
+      "-DMAGICKCORE_QUANTUM_DEPTH=16",
       "-I./include",
       "-std=c++23",
       "-o",
@@ -87,6 +117,11 @@
     "arguments": [
       "/usr/bin/g++",
       "-c",
+      "-I/usr/include/x86_64-linux-gnu/ImageMagick-6",
+      "-I/usr/include/ImageMagick-6",
+      "-fopenmp",
+      "-DMAGICKCORE_HDRI_ENABLE=0",
+      "-DMAGICKCORE_QUANTUM_DEPTH=16",
       "-I./include",
       "-std=c++23",
       "-o",
@@ -95,6 +130,44 @@
     ],
     "directory": "/home/jorge/Projects/opengl/opengl-renderer",
     "file": "/home/jorge/Projects/opengl/opengl-renderer/common/glut_backend.cpp",
+    "output": "/home/jorge/Projects/opengl/opengl-renderer/main"
+  },
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-c",
+      "-I/usr/include/x86_64-linux-gnu/ImageMagick-6",
+      "-I/usr/include/ImageMagick-6",
+      "-fopenmp",
+      "-DMAGICKCORE_HDRI_ENABLE=0",
+      "-DMAGICKCORE_QUANTUM_DEPTH=16",
+      "-I./include",
+      "-std=c++23",
+      "-o",
+      "main",
+      "./common/ogldev_texture.cpp"
+    ],
+    "directory": "/home/jorge/Projects/opengl/opengl-renderer",
+    "file": "/home/jorge/Projects/opengl/opengl-renderer/common/ogldev_texture.cpp",
+    "output": "/home/jorge/Projects/opengl/opengl-renderer/main"
+  },
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-c",
+      "-I/usr/include/x86_64-linux-gnu/ImageMagick-6",
+      "-I/usr/include/ImageMagick-6",
+      "-fopenmp",
+      "-DMAGICKCORE_HDRI_ENABLE=0",
+      "-DMAGICKCORE_QUANTUM_DEPTH=16",
+      "-I./include",
+      "-std=c++23",
+      "-o",
+      "main",
+      "./common/3rdparty/stb_image.cpp"
+    ],
+    "directory": "/home/jorge/Projects/opengl/opengl-renderer",
+    "file": "/home/jorge/Projects/opengl/opengl-renderer/common/3rdparty/stb_image.cpp",
     "output": "/home/jorge/Projects/opengl/opengl-renderer/main"
   }
 ]

@@ -8,6 +8,7 @@
 #include "ogldev_pipeline.h"
 #include "ogldev_math_3d.h"
 #include "ogldev_glut_backend.h"
+#include "ogldev_texture.h"
 
 #define WINDOW_WIDTH 2560
 #define WINDOW_HEIGHT 1600
@@ -15,10 +16,32 @@
 // #define WINDOWED
 #define WSL_FS // wsl fullscreen
 
+struct Vertex
+{
+    Vector3f m_pos;
+    Vector2f m_tex;
+
+    Vertex() {}
+
+    Vertex(Vector3f pos, Vector2f tex)
+    {
+        m_pos = pos;
+        m_tex = tex;
+    }
+};
+
+// Workaround for tutorials prior to switching to GLFW
+int IsGLVersionHigher(int MajorVer, int MinorVer)
+{
+    return false;
+}
+
 GLuint VBO;
 GLuint IBO;
 GLuint gWVPLocation;
+GLuint gSampler;
 
+Texture* pTexture = NULL;
 Camera* pGameCamera = NULL;
 PersProjInfo gPersProjInfo;
 
@@ -44,13 +67,16 @@ static void RenderSceneCB()
     glUniformMatrix4fv(gWVPLocation, 1, GL_TRUE, (const GLfloat*)p.GetWVPTrans());
 
     glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(1);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (const GLvoid*)12);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
-
+    pTexture->Bind(GL_TEXTURE0);
     glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, 0);
 
     glDisableVertexAttribArray(0);
+    glDisableVertexAttribArray(1);
 
     glutSwapBuffers();
 }
@@ -89,11 +115,10 @@ static void InitializeGlutCallbacks()
 
 static void CreateVertexBuffer()
 {
-    Vector3f Vertices[4];
-    Vertices[0] = Vector3f(-1.0f, -1.0f, 0.5773f);
-    Vertices[1] = Vector3f(0.0f, -1.0f, -1.15475f);
-    Vertices[2] = Vector3f(1.0f, -1.0f, 0.5773f);
-    Vertices[3] = Vector3f(0.0f, 1.0f, 0.0f);
+    Vertex Vertices[4] = { Vertex(Vector3f(-1.0f, -1.0f, 0.5773f), Vector2f(0.0f, 0.0f)),
+                           Vertex(Vector3f(0.0f, -1.0f, -1.15475f), Vector2f(0.5f, 0.0f)),
+                           Vertex(Vector3f(1.0f, -1.0f, 0.5773f),  Vector2f(1.0f, 0.0f)),
+                           Vertex(Vector3f(0.0f, 1.0f, 0.0f),      Vector2f(0.5f, 1.0f)) };
 
     glGenBuffers(1, &VBO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
@@ -184,6 +209,8 @@ static void CompileShaders()
 
     gWVPLocation = glGetUniformLocation(ShaderProgram, "gWVP");
     assert(gWVPLocation != 0xFFFFFFFF);
+    gSampler = glGetUniformLocation(ShaderProgram, "gSampler");
+    assert(gSampler != 0xFFFFFFFF);
 }
 
 int main(int argc, char** argv)
@@ -192,7 +219,7 @@ int main(int argc, char** argv)
     glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGBA|GLUT_DEPTH);
     glutInitWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);
     glutInitWindowPosition(0, 0);
-    const char* windowName = "Tutorial 15";
+    const char* windowName = "Tutorial 16";
     #ifdef WINDOWED
     glutCreateWindow(windowName);
     #elifdef WSL_FS
@@ -225,11 +252,21 @@ int main(int argc, char** argv)
     printf("GL version: %s\n", glGetString(GL_VERSION));
 
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+    glFrontFace(GL_CW);
+    glCullFace(GL_BACK);
+    glEnable(GL_CULL_FACE);
 
     CreateVertexBuffer();
     CreateIndexBuffer();
 
     CompileShaders();
+
+    glUniform1i(gSampler, 0);
+
+    pTexture = new Texture(GL_TEXTURE_2D, "./content/test.png");
+    if (!pTexture->Load()) {
+        return 1;
+    }
 
     gPersProjInfo.FOV = 60.0f;
     gPersProjInfo.Height = WINDOW_HEIGHT;

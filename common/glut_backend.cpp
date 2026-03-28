@@ -193,14 +193,20 @@ void GLUTBackendInit(int argc, char** argv, bool WithDepth, bool WithStencil)
 }
 
 
-bool GLUTBackendCreateWindow(unsigned int Width, unsigned int Height, bool isFullScreen, const char* pTitle)
+bool GLUTBackendCreateWindow(unsigned int Width, unsigned int Height, bool isFullScreen, bool isWsl, const char* pTitle)
 {
     if (isFullScreen) {
-        char ModeString[64] = { 0 };
-        int bpp = 32;
-        SNPRINTF(ModeString, sizeof(ModeString), "%dx%d:%d@60", Width, Height, bpp);
-        glutGameModeString(ModeString);
-        glutEnterGameMode();
+        if (isWsl) {
+            glutInitWindowSize(Width, Height);
+            glutCreateWindow(pTitle);
+            glutFullScreen();
+        } else {
+            char ModeString[64] = { 0 };
+            int bpp = 32;
+            SNPRINTF(ModeString, sizeof(ModeString), "%dx%d:%d@60", Width, Height, bpp);
+            glutGameModeString(ModeString);
+            glutEnterGameMode();
+        }
     }
     else {
         glutInitWindowSize(Width, Height);

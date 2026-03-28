@@ -16,23 +16,33 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef GLUT_BACKEND_H
-#define	GLUT_BACKEND_H
+#ifndef LIGHTING_TECHNIQUE_17_H
+#define	LIGHTING_TECHNIQUE_17_H
 
-#include "ogldev_types.h"
-#include "ogldev_callbacks.h"
+#include "technique.h"
+#include "ogldev_math_3d.h"
+#include "ogldev_lights_common.h"
 
-void GLUTBackendInit(int argc, char** argv, bool WithDepth, bool WithStencil);
 
-bool GLUTBackendCreateWindow(uint Width, uint Height, bool isFullScreen, bool isWsl, const char* pTitle);
+class LightingTechnique : public Technique
+{
+public:
 
-void GLUTBackendRun(ICallbacks* pCallbacks);
+    LightingTechnique();
 
-void GLUTBackendSwapBuffers();
+    virtual bool Init();
 
-void GLUTBackendLeaveMainLoop();
+    void SetWVP(const Matrix4f& WVP);
+    void SetTextureUnit(unsigned int TextureUnit);
+    void SetDirectionalLight(const DirectionalLight& Light);
 
-OGLDEV_KEY GLUTKeyToOGLDEVKey(uint Key);
+private:
 
-#endif	/* GLUT_BACKEND_H */
+    GLuint m_WVPLocation;
+    GLuint m_samplerLocation;
+    GLuint m_dirLightColorLocation;
+    GLuint m_dirLightAmbientIntensityLocation;
+};
 
+
+#endif	/* LIGHTING_TECHNIQUE_H */

@@ -1,6 +1,6 @@
 /*
 
-	Copyright 2011 Etay Meiri
+        Copyright 2014 Etay Meiri
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -16,23 +16,39 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef GLUT_BACKEND_H
-#define	GLUT_BACKEND_H
+//-----------
+// DEPRECATED
+//-----------
 
-#include "ogldev_types.h"
-#include "ogldev_callbacks.h"
+#ifndef OGLDEV_APP_H
+#define OGLDEV_APP_H
 
-void GLUTBackendInit(int argc, char** argv, bool WithDepth, bool WithStencil);
+#ifndef _WIN32
+#include "freetypeGL.h"
+#endif
 
-bool GLUTBackendCreateWindow(uint Width, uint Height, bool isFullScreen, bool isWsl, const char* pTitle);
 
-void GLUTBackendRun(ICallbacks* pCallbacks);
+class OgldevApp
+{
+protected:
+	OgldevApp();
 
-void GLUTBackendSwapBuffers();
+	void CalcFPS();
 
-void GLUTBackendLeaveMainLoop();
+	void RenderFPS();
 
-OGLDEV_KEY GLUTKeyToOGLDEVKey(uint Key);
+	float GetRunningTime();
 
-#endif	/* GLUT_BACKEND_H */
+protected:
+#ifndef _WIN32
+//	FontRenderer m_fontRenderer;
+#endif
+private:
+	long long m_frameTime;
+	long long m_startTime;
+	int m_frameCount;
+    int m_fps;
+};
 
+
+#endif

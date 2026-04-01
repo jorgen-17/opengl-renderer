@@ -9,6 +9,7 @@
 #include "ogldev_math_3d.h"
 #include "ogldev_glut_backend.h"
 #include "ogldev_texture.h"
+#include "ogldev_lights_common.h"
 #include "lighting_technique.h"
 #include "ogldev_app.h"
 
@@ -40,11 +41,11 @@ int IsGLVersionHigher(int MajorVer, int MinorVer)
 }
 
 
-class Tutorial18 : public ICallbacks, public OgldevApp
+class Tutorial19 : public ICallbacks, public OgldevApp
 {
 public:
 
-    Tutorial18()
+    Tutorial19()
     {
         m_pGameCamera = NULL;
         m_pTexture = NULL;
@@ -53,7 +54,7 @@ public:
         m_directionalLight.Color = Vector3f(1.0f, 1.0f, 1.0f);
         m_directionalLight.AmbientIntensity = 0.5f;
         m_directionalLight.DiffuseIntensity = 0.75f;
-        m_directionalLight.Direction = Vector3f(1.0f, 0.0, 0.0);
+        m_directionalLight.Direction = Vector3f(1.0f, -1.0f, 0.0f);
 
         m_persProjInfo.FOV = 60.0f;
         m_persProjInfo.Height = WINDOW_HEIGHT;
@@ -62,7 +63,7 @@ public:
         m_persProjInfo.zFar = 100.0f;
     }
 
-    ~Tutorial18()
+    ~Tutorial19()
     {
         delete m_pEffect;
         delete m_pGameCamera;
@@ -127,6 +128,9 @@ public:
         const Matrix4f& WorldTransformation = p.GetWorldTrans();
         m_pEffect->SetWorldMatrix(WorldTransformation);
         m_pEffect->SetDirectionalLight(m_directionalLight);
+        m_pEffect->SetEyeWorldPos(m_pGameCamera->GetPos());
+        m_pEffect->SetMatSpecularIntensity(1.0f);
+        m_pEffect->SetMatSpecularPower(32);
 
         glEnableVertexAttribArray(0);
         glEnableVertexAttribArray(1);
@@ -241,11 +245,11 @@ int main(int argc, char** argv)
 {
     GLUTBackendInit(argc, argv, false, false);
 
-    if (!GLUTBackendCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, fullscreen, wsl, "Tutorial 18")) {
+    if (!GLUTBackendCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, fullscreen, wsl, "Tutorial 19")) {
         return 1;
     }
 
-    Tutorial18* pApp = new Tutorial18();
+    Tutorial19* pApp = new Tutorial19();
 
     if (!pApp->Init()) {
         return 1;

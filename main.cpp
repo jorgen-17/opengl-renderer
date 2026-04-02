@@ -10,8 +10,8 @@
 #include "ogldev_glut_backend.h"
 #include "ogldev_texture.h"
 #include "ogldev_lights_common.h"
-#include "lighting_technique.h"
 #include "ogldev_app.h"
+#include "lighting_technique.h"
 
 #define WINDOW_WIDTH 2560
 #define WINDOW_HEIGHT 1600
@@ -50,12 +50,11 @@ int IsGLVersionHigher(int MajorVer, int MinorVer)
     return false;
 }
 
-
-class Tutorial20 : public ICallbacks, public OgldevApp
+class Tutorial21 : public ICallbacks, public OgldevApp
 {
 public:
 
-    Tutorial20()
+    Tutorial21()
     {
         m_pGameCamera = NULL;
         m_pTexture = NULL;
@@ -73,7 +72,7 @@ public:
         m_persProjInfo.zFar = 50.0f;
     }
 
-    ~Tutorial20()
+    ~Tutorial21()
     {
         delete m_pEffect;
         delete m_pGameCamera;
@@ -147,6 +146,22 @@ public:
         pl[1].Attenuation.Linear = 0.1f;
         m_pEffect->SetPointLights(2, pl);
 
+        SpotLight sl[2];
+        sl[0].DiffuseIntensity = 0.9f;
+        sl[0].Color = Vector3f(0.0f, 1.0f, 1.0f);
+        sl[0].Position = m_pGameCamera->GetPos();
+        sl[0].Direction = m_pGameCamera->GetTarget();
+        sl[0].Attenuation.Linear = 0.1f;
+        sl[0].Cutoff = 10.0f;
+
+        sl[1].DiffuseIntensity = 0.9f;
+        sl[1].Color = Vector3f(1.0f, 1.0f, 1.0f);
+        sl[1].Position = Vector3f(5.0f, 3.0f, 10.0f);
+        sl[1].Direction = Vector3f(0.0f, -1.0f, 0.0f);
+        sl[1].Attenuation.Linear = 0.1f;
+        sl[1].Cutoff = 20.0f;
+        m_pEffect->SetSpotLights(2, sl);
+
         glEnableVertexAttribArray(0);
         glEnableVertexAttribArray(1);
         glEnableVertexAttribArray(2);
@@ -171,19 +186,15 @@ public:
             case OGLDEV_KEY_q:
                     GLUTBackendLeaveMainLoop();
                     break;
-
             case OGLDEV_KEY_a:
                 m_directionalLight.AmbientIntensity += 0.05f;
                 break;
-
             case OGLDEV_KEY_s:
                 m_directionalLight.AmbientIntensity -= 0.05f;
                 break;
-
             case OGLDEV_KEY_z:
                 m_directionalLight.DiffuseIntensity += 0.05f;
                 break;
-
             case OGLDEV_KEY_x:
                 m_directionalLight.DiffuseIntensity -= 0.05f;
                 break;
@@ -230,11 +241,11 @@ int main(int argc, char** argv)
 {
     GLUTBackendInit(argc, argv, false, false);
 
-    if (!GLUTBackendCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, fullscreen, wsl, "Tutorial 20")) {
+    if (!GLUTBackendCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, fullscreen, wsl, "Tutorial 21")) {
         return 1;
     }
 
-    Tutorial20* pApp = new Tutorial20();
+    Tutorial21* pApp = new Tutorial21();
 
     if (!pApp->Init()) {
         return 1;

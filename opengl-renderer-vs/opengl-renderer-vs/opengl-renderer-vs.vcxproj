@@ -111,10 +111,10 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>..\lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glew32.lib;freeglutd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glew32.lib;freeglutd.lib;assimp-vc143-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
-      <Command>xcopy "..\..\shader.*" /Y &amp;&amp; xcopy "..\..\content" ".\content" /I /S /Y</Command>
+      <Command>xcopy "..\..\common\shaders" ".\common\shaders" /I /S /Y &amp;&amp; xcopy "..\..\content" ".\content" /I /S /Y</Command>
     </PreBuildEvent>
     <PreBuildEvent>
       <Message>copy over shaders and content folder</Message>
@@ -135,10 +135,10 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>..\lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glew32.lib;freeglut.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glew32.lib;freeglut.lib;assimp-vc143-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
-      <Command>xcopy "..\..\shader.*" /Y &amp;&amp; xcopy "..\..\content" ".\content" /I /S /Y</Command>
+      <Command>xcopy "..\..\common\shaders" ".\common\shaders" /I /S /Y &amp;&amp; xcopy "..\..\content" ".\content" /I /S /Y</Command>
     </PreBuildEvent>
     <PreBuildEvent>
       <Message>copy over shaders and content folder</Message>
@@ -156,12 +156,8 @@
     <ClCompile Include="..\..\common\ogldev_util.cpp" />
     <ClCompile Include="..\..\common\pipeline.cpp" />
     <ClCompile Include="..\..\common\technique.cpp" />
-    <ClCompile Include="..\..\lighting_technique.cpp" />
     <ClCompile Include="..\..\main.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\shader.fs" />
-    <None Include="..\..\shader.vs" />
+    <ClCompile Include="..\..\mesh.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

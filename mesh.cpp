@@ -114,7 +114,7 @@ void Mesh::InitMesh(unsigned int Index, const aiMesh* paiMesh)
     for (unsigned int i = 0; i < paiMesh->mNumVertices; i++) {
         const aiVector3D* pPos      = &(paiMesh->mVertices[i]);
         const aiVector3D* pNormal   = &(paiMesh->mNormals[i]);
-        // why is this always hardcoded to index zero? maybe its a fake 2d array, really just 1d
+        // there may be several textures assinged to a mesh, we are only looking at the first one for now
         const aiVector3D* pTexCoord = paiMesh->HasTextureCoords(0) ? &(paiMesh->mTextureCoords[0][i]) : &Zero3D;
 
         Vertex v(Vector3f(pPos->x, pPos->y, pPos->z),
@@ -175,13 +175,6 @@ bool Mesh::InitMaterials(const aiScene* pScene, const std::string& Filename)
                     printf("Loaded texture '%s'\n", FullPath.c_str());
                 }
             }
-        }
-
-        // Load a white texture in case the model does not include its own texture
-        if (!m_Textures[i]) {
-            m_Textures[i] = new Texture(GL_TEXTURE_2D, "./content/white.png");
-
-            Ret = m_Textures[i]->Load();
         }
     }
 

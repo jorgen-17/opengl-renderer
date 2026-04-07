@@ -1,5 +1,7 @@
 main
 x64
 .vs/
+opengl-renderer-vs/**/*.fs
+opengl-renderer-vs/**/*.vs
 opengl-renderer-vs/**/shaders
 opengl-renderer-vs/**/content

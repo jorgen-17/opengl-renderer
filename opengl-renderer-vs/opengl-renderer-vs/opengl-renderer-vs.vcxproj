@@ -152,16 +152,19 @@
     <ClCompile Include="..\..\common\ogldev_app.cpp" />
     <ClCompile Include="..\..\common\ogldev_atb.cpp" />
     <ClCompile Include="..\..\common\ogldev_basic_lighting.cpp" />
+    <ClCompile Include="..\..\common\ogldev_shadow_map_fbo.cpp" />
     <ClCompile Include="..\..\common\ogldev_texture.cpp" />
     <ClCompile Include="..\..\common\ogldev_util.cpp" />
     <ClCompile Include="..\..\common\pipeline.cpp" />
     <ClCompile Include="..\..\common\technique.cpp" />
     <ClCompile Include="..\..\main.cpp" />
     <ClCompile Include="..\..\mesh.cpp" />
-    <ClCompile Include="..\..\shadow_map_fbo.cpp" />
+    <ClCompile Include="..\..\lighting_technique.cpp" />
     <ClCompile Include="..\..\shadow_map_technique.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\lighting.fs" />
+    <None Include="..\..\lighting.vs" />
     <None Include="..\..\shadow_map.fs" />
     <None Include="..\..\shadow_map.vs" />
   </ItemGroup>

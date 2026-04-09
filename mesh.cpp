@@ -73,6 +73,7 @@ bool Mesh::LoadMesh(const std::string& Filename)
 {
     // Release the previously loaded mesh (if it exists)
     Clear();
+    printf("loading %s\n", Filename.c_str());
 
     bool Ret = false;
     Assimp::Importer Importer;
@@ -175,6 +176,12 @@ bool Mesh::InitMaterials(const aiScene* pScene, const std::string& Filename)
                     printf("Loaded texture '%s'\n", FullPath.c_str());
                 }
             }
+        }
+        // Load a white texture in case the model does not include its own texture
+        if (!m_Textures[i]) {
+            m_Textures[i] = new Texture(GL_TEXTURE_2D, "./content/white.png");
+
+            Ret = m_Textures[i]->Load();
         }
     }
 

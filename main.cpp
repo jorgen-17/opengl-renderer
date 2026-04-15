@@ -5,15 +5,12 @@
 #include <GL/glew.h>
 #include <GL/freeglut.h>
 
-#include "ogldev_pipeline.h"
-#include "ogldev_math_3d.h"
+#include "ogldev_camera.h"
+#include "ogldev_engine_common.h"
 #include "ogldev_glut_backend.h"
-#include "ogldev_lights_common.h"
-#include "ogldev_app.h"
-#include "ogldev_shadow_map_fbo.h"
-#include "lighting_technique.h"
-#include "mesh.h"
-#include "shadow_map_technique.h"
+#include "ogldev_math_3d.h"
+#include "skinning_technique.h"
+#include "skinned_mesh.h"
 
 #define WINDOW_WIDTH 2560
 #define WINDOW_HEIGHT 1600
@@ -26,212 +23,313 @@ int IsGLVersionHigher(int MajorVer, int MinorVer)
     return false;
 }
 
-class Tutorial24 : public ICallbacks, public OgldevApp
+class Tutorial25
 {
 public:
+    Tutorial25();
+    ~Tutorial25();
 
-    Tutorial24()
-    {
-        m_pLightingEffect = NULL;
-        m_pShadowMapTech = NULL;
-        m_pGameCamera = NULL;
-        m_pMesh = NULL;
-        m_pQuad = NULL;
-        m_scale = 0.0f;
-        m_pGroundTex = NULL;
+    bool Init();
 
-        m_spotLight.AmbientIntensity = 0.1f;
-        m_spotLight.DiffuseIntensity = 0.9f;
-        m_spotLight.Color = Vector3f(1.0f, 1.0f, 1.0f);
-        m_spotLight.Attenuation.Linear = 0.01f;
-        m_spotLight.Position  = Vector3f(-20.0, 20.0, 1.0f);
-        m_spotLight.Direction = Vector3f(1.0f, -1.0f, 0.0f);
-        m_spotLight.Cutoff =  20.0f;
-
-        m_persProjInfo.FOV = 60.0f;
-        m_persProjInfo.Height = WINDOW_HEIGHT;
-        m_persProjInfo.Width = WINDOW_WIDTH;
-        m_persProjInfo.zNear = 1.0f;
-        m_persProjInfo.zFar = 50.0f;
-   }
-
-    ~Tutorial24()
-    {
-        SAFE_DELETE(m_pLightingEffect);
-        SAFE_DELETE(m_pShadowMapTech);
-        SAFE_DELETE(m_pGameCamera);
-        SAFE_DELETE(m_pMesh);
-        SAFE_DELETE(m_pQuad);
-        SAFE_DELETE(m_pGroundTex);
-    }
-
-    bool Init()
-    {
-        Vector3f Pos(3.0f, 8.0f, -10.0f);
-        Vector3f Target(0.0f, -0.2f, 1.0f);
-        Vector3f Up(0.0, 1.0f, 0.0f);
-
-        if (!m_shadowMapFBO.Init(WINDOW_WIDTH, WINDOW_HEIGHT)) {
-            return false;
-        }
-
-        m_pGameCamera = new Camera(WINDOW_WIDTH, WINDOW_HEIGHT, Pos, Target, Up);
-
-        m_pLightingEffect = new LightingTechnique();
-
-        if (!m_pLightingEffect->Init()) {
-            printf("Error initializing the lighting technique\n");
-            return false;
-        }
-
-        m_pLightingEffect->Enable();
-        m_pLightingEffect->SetSpotLights(1, &m_spotLight);
-        m_pLightingEffect->SetTextureUnit(0);
-        m_pLightingEffect->SetShadowMapTextureUnit(1);
-
-        m_pShadowMapTech = new ShadowMapTechnique();
-
-        if (!m_pShadowMapTech->Init()) {
-            printf("Error initializing the shadow map technique\n");
-            return false;
-        }
-
-        m_pQuad = new Mesh();
-
-        if (!m_pQuad->LoadMesh("./content/quad.obj")) {
-            return false;
-        }
-
-        m_pGroundTex = new Texture(GL_TEXTURE_2D, "./content/test.png");
-
-        if (!m_pGroundTex->Load()) {
-            return false;
-        }
-
-        m_pMesh = new Mesh();
-
-        return m_pMesh->LoadMesh("./content/teapot/teapot.obj");
-    }
-
-    void Run()
-    {
-        GLUTBackendRun(this);
-    }
-
-    virtual void RenderSceneCB()
-    {
-        m_pGameCamera->OnRender();
-        m_scale += 0.05f;
-
-        ShadowMapPass();
-        RenderPass();
-
-        glutSwapBuffers();
-    }
-
-    void ShadowMapPass()
-    {
-        m_shadowMapFBO.BindForWriting();
-
-        glClear(GL_DEPTH_BUFFER_BIT);
-
-        m_pShadowMapTech->Enable();
-
-        Pipeline p;
-        p.Scale(0.1f, 0.1f, 0.1f);
-        p.Rotate(0.0f, m_scale, 0.0f);
-        p.WorldPos(0.0f, 0.0f, 3.0f);
-        p.SetCamera(m_spotLight.Position, m_spotLight.Direction, Vector3f(0.0f, 1.0f, 0.0f));
-        p.SetPerspectiveProj(m_persProjInfo);
-        m_pShadowMapTech->SetWVP(p.GetWVPTrans());
-        m_pMesh->Render();
-
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    }
-
-    void RenderPass()
-    {
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        m_pLightingEffect->Enable();
-
-        m_pLightingEffect->SetEyeWorldPos(m_pGameCamera->GetPos());
-
-        m_shadowMapFBO.BindForReading(GL_TEXTURE1);
-
-        Pipeline p;
-        p.SetPerspectiveProj(m_persProjInfo);
-
-        p.Scale(10.0f, 10.0f, 10.0f);
-        p.WorldPos(0.0f, 0.0f, 1.0f);
-        p.Rotate(90.0f, 0.0f, 0.0f);
-        p.SetCamera(m_pGameCamera->GetPos(), m_pGameCamera->GetTarget(), m_pGameCamera->GetUp());
-        m_pLightingEffect->SetWVP(p.GetWVPTrans());
-        m_pLightingEffect->SetWorldMatrix(p.GetWorldTrans());
-        p.SetCamera(m_spotLight.Position, m_spotLight.Direction, Vector3f(0.0f, 1.0f, 0.0f));
-        m_pLightingEffect->SetLightWVP(p.GetWVPTrans());
-        m_pGroundTex->Bind(GL_TEXTURE0);
-        m_pQuad->Render();
-
-        p.Scale(0.1f, 0.1f, 0.1f);
-        p.Rotate(0.0f, m_scale, 0.0f);
-        p.WorldPos(0.0f, 0.0f, 3.0f);
-        p.SetCamera(m_pGameCamera->GetPos(), m_pGameCamera->GetTarget(), m_pGameCamera->GetUp());
-        m_pLightingEffect->SetWVP(p.GetWVPTrans());
-        m_pLightingEffect->SetWorldMatrix(p.GetWorldTrans());
-        p.SetCamera(m_spotLight.Position, m_spotLight.Direction, Vector3f(0.0f, 1.0f, 0.0f));
-        m_pLightingEffect->SetLightWVP(p.GetWVPTrans());
-        m_pMesh->Render();
-    }
-
-    void KeyboardCB(OGLDEV_KEY OgldevKey, OGLDEV_KEY_STATE State)
-    {
-        switch (OgldevKey) {
-            case OGLDEV_KEY_ESCAPE:
-            case OGLDEV_KEY_q:
-                GLUTBackendLeaveMainLoop();
-                break;
-            default:
-                m_pGameCamera->OnKeyboard(OgldevKey);
-        }
-    }
-
-    virtual void PassiveMouseCB(int x, int y)
-    {
-        m_pGameCamera->OnMouse(x, y);
-    }
+    void RenderSceneCB();
+    void KeyboardCB(OGLDEV_KEY key, int mouse_x, int mouse_y);
+    void SpecialKeyboardCB(OGLDEV_KEY key, int mouse_x, int mouse_y);
+    void PassiveMouseCB(int x, int y);
 
 private:
-
-    LightingTechnique* m_pLightingEffect;
-    ShadowMapTechnique* m_pShadowMapTech;
-    Camera* m_pGameCamera;
-    float m_scale;
-    SpotLight m_spotLight;
-    Mesh* m_pMesh;
-    Mesh* m_pQuad;
-    Texture* m_pGroundTex;
-    ShadowMapFBO m_shadowMapFBO;
-    PersProjInfo m_persProjInfo;
+    Camera* pGameCamera = NULL;
+    SkinnedMesh* pMesh1 = NULL;
+    PersProjInfo persProjInfo;
+    SkinningTechnique* pSkinningTech = NULL;
+    PointLight pointLights[SkinningTechnique::MAX_POINT_LIGHTS];
+    SpotLight spotLights[SkinningTechnique::MAX_SPOT_LIGHTS];
+    long long StartTime = 0;
+    int DisplayBoneIndex = 0;
 };
+
+Tutorial25::Tutorial25()
+{
+    GLclampf Red = 0.0f, Green = 0.0f, Blue = 0.0f, Alpha = 0.0f;
+    glClearColor(Red, Green, Blue, Alpha);
+
+    glEnable(GL_CULL_FACE);
+    glFrontFace(GL_CW);
+    glCullFace(GL_BACK);
+
+    glEnable(GL_DEPTH_TEST);
+
+    float FOV = 45.0f;
+    float zNear = 0.1f;
+    float zFar = 100.0f;
+
+    persProjInfo = { FOV, (float)WINDOW_WIDTH, (float)WINDOW_HEIGHT, zNear, zFar };
+
+    pointLights[0].AmbientIntensity = 1.0f;
+    pointLights[0].DiffuseIntensity = 1.0f;
+    pointLights[0].Color = Vector3f(1.0f, 1.0f, 0.0f);
+    pointLights[0].Attenuation.Linear = 0.0f;
+    pointLights[0].Attenuation.Exp = 0.0f;
+
+    pointLights[1].DiffuseIntensity = 0.0f;
+    pointLights[1].Color = Vector3f(0.0f, 1.0f, 1.0f);
+    pointLights[1].Attenuation.Linear = 0.0f;
+    pointLights[1].Attenuation.Exp = 0.2f;
+
+    spotLights[0].DiffuseIntensity = 1.0f;
+    spotLights[0].Color = Vector3f(1.0f, 1.0f, 1.0f);
+    spotLights[0].Attenuation.Linear = 0.01f;
+    spotLights[0].Cutoff = 20.0f;
+
+    spotLights[1].DiffuseIntensity = 1.0f;
+    spotLights[1].Color = Vector3f(1.0f, 1.0f, 0.0f);
+    spotLights[1].Attenuation.Linear = 0.01f;
+    spotLights[1].Cutoff = 30.0f;
+}
+
+Tutorial25::~Tutorial25()
+{
+    if (pGameCamera) {
+        delete pGameCamera;
+    }
+
+    if (pMesh1) {
+        delete pMesh1;
+    }
+}
+
+bool Tutorial25::Init()
+{
+    Vector3f CameraPos(0.0f, 5.0f, -8.0f);
+    Vector3f CameraTarget(0.0f, -0.5f, 1.0f);
+    Vector3f CameraUp(0.0f, 1.0f, 0.0f);
+
+    pGameCamera = new Camera(WINDOW_WIDTH, WINDOW_HEIGHT, CameraPos, CameraTarget, CameraUp);
+
+    pMesh1 = new SkinnedMesh();
+
+    if (!pMesh1->LoadMesh("./content/boblampclean.md5mesh")) {
+        printf("Mesh load failed\n");
+        return false;
+    }
+
+    pSkinningTech = new SkinningTechnique();
+
+    if (!pSkinningTech->Init()) {
+        return false;
+    }
+
+    pSkinningTech->Enable();
+
+    pSkinningTech->SetTextureUnit(COLOR_TEXTURE_UNIT_INDEX);
+    pSkinningTech->SetSpecularExponentTextureUnit(SPECULAR_EXPONENT_UNIT_INDEX);
+    pSkinningTech->SetDisplayBoneIndex(DisplayBoneIndex);
+
+    StartTime = GetCurrentTimeMillis();
+
+    return true;
+}
+
+void Tutorial25::RenderSceneCB()
+{
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    pGameCamera->OnRender();
+
+    WorldTrans& worldTransform = pMesh1->GetWorldTransform();
+
+    worldTransform.SetRotation(90.0f, 180.0f, 0.0f);
+    worldTransform.SetPosition(0.0f, 0.0f, 10.0f);
+    worldTransform.SetScale(0.1f);
+
+    Matrix4f World = worldTransform.GetMatrix();
+    Matrix4f View = pGameCamera->GetMatrix();
+    Matrix4f Projection;
+    Projection.InitPersProjTransform(persProjInfo);
+    Matrix4f WVP = Projection * View * World;
+    pSkinningTech->SetWVP(WVP);
+
+    pointLights[0].WorldPosition.x = 0.0f;
+    pointLights[0].WorldPosition.y = 1.0;
+    pointLights[0].WorldPosition.z = 1.0f;
+    pointLights[0].CalcLocalPosition(worldTransform);
+
+    pointLights[1].WorldPosition.x = 10.0f;
+    pointLights[1].WorldPosition.y = 1.0f;
+    pointLights[1].WorldPosition.z = 0.0f;
+    pointLights[1].CalcLocalPosition(worldTransform);
+
+    pSkinningTech->SetPointLights(2, pointLights);
+
+    spotLights[0].WorldPosition = pGameCamera->GetPos();
+    spotLights[0].WorldDirection = pGameCamera->GetTarget();
+    spotLights[0].CalcLocalDirectionAndPosition(worldTransform);
+
+    spotLights[1].WorldPosition = Vector3f(0.0f, 1.0f, 0.0f);
+    spotLights[1].WorldDirection = Vector3f(0.0f, -1.0f, 0.0f);
+    spotLights[1].CalcLocalDirectionAndPosition(worldTransform);
+
+    pSkinningTech->SetSpotLights(2, spotLights);
+
+    pSkinningTech->SetMaterial(pMesh1->GetMaterial());
+
+    Vector3f CameraLocalPos3f = worldTransform.WorldPosToLocalPos(pGameCamera->GetPos());
+    pSkinningTech->SetCameraLocalPos(CameraLocalPos3f);
+
+    long long CurrentTime = GetCurrentTimeMillis();
+
+    pMesh1->Render();
+
+    glutPostRedisplay();
+    glutSwapBuffers();
+}
+
+#define ATTEN_STEP 0.01f
+
+#define ANGLE_STEP 1.0f
+
+void Tutorial25::KeyboardCB(OGLDEV_KEY key, int mouse_x, int mouse_y)
+{
+    switch (key) {
+    case 'q':
+    case 27:    // escape key code
+        exit(0);
+
+    case ' ':
+        DisplayBoneIndex++;
+        DisplayBoneIndex = DisplayBoneIndex % pMesh1->NumBones();
+        pSkinningTech->SetDisplayBoneIndex(DisplayBoneIndex);
+        break;
+
+    case 'a':
+        pointLights[0].Attenuation.Linear += ATTEN_STEP;
+        pointLights[1].Attenuation.Linear += ATTEN_STEP;
+        break;
+
+    case 'z':
+        pointLights[0].Attenuation.Linear -= ATTEN_STEP;
+        pointLights[1].Attenuation.Linear -= ATTEN_STEP;
+        break;
+
+    case 's':
+        pointLights[0].Attenuation.Exp += ATTEN_STEP;
+        pointLights[1].Attenuation.Exp += ATTEN_STEP;
+        break;
+
+    case 'x':
+        pointLights[0].Attenuation.Exp -= ATTEN_STEP;
+        pointLights[1].Attenuation.Exp -= ATTEN_STEP;
+        break;
+
+    case 'd':
+        spotLights[0].Cutoff += ANGLE_STEP;
+        break;
+
+    case 'c':
+        spotLights[0].Cutoff -= ANGLE_STEP;
+        break;
+
+    case 'g':
+        spotLights[1].Cutoff += ANGLE_STEP;
+        break;
+
+    case 'b':
+        spotLights[1].Cutoff -= ANGLE_STEP;
+        break;
+    }
+
+    pGameCamera->OnKeyboard(key);
+}
+
+void Tutorial25::SpecialKeyboardCB(OGLDEV_KEY key, int mouse_x, int mouse_y)
+{
+    pGameCamera->OnKeyboard(key);
+}
+
+
+void Tutorial25::PassiveMouseCB(int x, int y)
+{
+    pGameCamera->OnMouse(x, y);
+}
+
+
+Tutorial25* pTutorial25 = NULL;
+
+
+void RenderSceneCB()
+{
+    pTutorial25->RenderSceneCB();
+}
+
+
+void KeyboardCB(unsigned char key, int mouse_x, int mouse_y)
+{
+    OGLDEV_KEY OgldevKey = (OGLDEV_KEY)key;
+    pTutorial25->KeyboardCB(OgldevKey, mouse_x, mouse_y);
+}
+
+
+void SpecialKeyboardCB(int key, int mouse_x, int mouse_y)
+{
+    OGLDEV_KEY OgldevKey = GLUTKeyToOGLDEVKey(key);
+    pTutorial25->SpecialKeyboardCB(OgldevKey, mouse_x, mouse_y);
+}
+
+
+void PassiveMouseCB(int x, int y)
+{
+    pTutorial25->PassiveMouseCB(x, y);
+}
+
+
+void InitializeGlutCallbacks()
+{
+    glutDisplayFunc(RenderSceneCB);
+    glutKeyboardFunc(KeyboardCB);
+    glutSpecialFunc(SpecialKeyboardCB);
+    glutPassiveMotionFunc(PassiveMouseCB);
+}
 
 int main(int argc, char** argv)
 {
-    GLUTBackendInit(argc, argv, true, false);
+    glutInit(&argc, argv);
+    glutInitContextVersion(3, 3);
+    glutInitContextProfile(GLUT_CORE_PROFILE);
+    glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGBA|GLUT_DEPTH);
+    glutInitWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);
 
-    if (!GLUTBackendCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, fullscreen, wsl, "Tutorial 24")) {
+    const char* pTitle = "Tutorial 25";
+    if (fullscreen) {
+        if (wsl) {
+            glutInitWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);
+            glutCreateWindow(pTitle);
+            glutFullScreen();
+        } else {
+            char ModeString[64] = { 0 };
+            int bpp = 32;
+            SNPRINTF(ModeString, sizeof(ModeString), "%dx%d:%d@60", WINDOW_WIDTH, WINDOW_HEIGHT, bpp);
+            glutGameModeString(ModeString);
+            glutEnterGameMode();
+        }
+    } else {
+        glutInitWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);
+        glutCreateWindow(pTitle);
+    }
+
+    // Must be done after glut is initialized!
+    GLenum res = glewInit();
+    if (res != GLEW_OK) {
+        fprintf(stderr, "Error: '%s'\n", glewGetErrorString(res));
+        return 0;
+    }
+
+    InitializeGlutCallbacks();
+
+    pTutorial25 = new Tutorial25();
+
+    if (!pTutorial25->Init()) {
         return 1;
     }
 
-    Tutorial24* pApp = new Tutorial24();
-
-    if (!pApp->Init()) {
-        return 1;
-    }
-
-    pApp->Run();
-
-    delete pApp;
+    glutMainLoop();
 
     return 0;
 }

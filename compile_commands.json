@@ -39,10 +39,10 @@
       "-std=c++23",
       "-o",
       "main",
-      "mesh.cpp"
+      "skinning_technique.cpp"
     ],
     "directory": "/home/jorge/Projects/opengl/opengl-renderer",
-    "file": "/home/jorge/Projects/opengl/opengl-renderer/mesh.cpp",
+    "file": "/home/jorge/Projects/opengl/opengl-renderer/skinning_technique.cpp",
     "output": "/home/jorge/Projects/opengl/opengl-renderer/main"
   },
   {
@@ -62,33 +62,10 @@
       "-std=c++23",
       "-o",
       "main",
-      "shadow_map_technique.cpp"
+      "skinned_mesh.cpp"
     ],
     "directory": "/home/jorge/Projects/opengl/opengl-renderer",
-    "file": "/home/jorge/Projects/opengl/opengl-renderer/shadow_map_technique.cpp",
-    "output": "/home/jorge/Projects/opengl/opengl-renderer/main"
-  },
-  {
-    "arguments": [
-      "/usr/bin/g++",
-      "-c",
-      "-g",
-      "-I/usr/include/x86_64-linux-gnu/ImageMagick-6",
-      "-I/usr/include/ImageMagick-6",
-      "-fopenmp",
-      "-DMAGICKCORE_HDRI_ENABLE=0",
-      "-DMAGICKCORE_QUANTUM_DEPTH=16",
-      "-I/usr/include/freetype2",
-      "-I/usr/include/libpng16",
-      "-I./include",
-      "-I./common/FreetypeGL",
-      "-std=c++23",
-      "-o",
-      "main",
-      "lighting_technique.cpp"
-    ],
-    "directory": "/home/jorge/Projects/opengl/opengl-renderer",
-    "file": "/home/jorge/Projects/opengl/opengl-renderer/lighting_technique.cpp",
+    "file": "/home/jorge/Projects/opengl/opengl-renderer/skinned_mesh.cpp",
     "output": "/home/jorge/Projects/opengl/opengl-renderer/main"
   },
   {
@@ -388,6 +365,29 @@
     ],
     "directory": "/home/jorge/Projects/opengl/opengl-renderer",
     "file": "/home/jorge/Projects/opengl/opengl-renderer/common/3rdparty/stb_image.cpp",
+    "output": "/home/jorge/Projects/opengl/opengl-renderer/main"
+  },
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-c",
+      "-g",
+      "-I/usr/include/x86_64-linux-gnu/ImageMagick-6",
+      "-I/usr/include/ImageMagick-6",
+      "-fopenmp",
+      "-DMAGICKCORE_HDRI_ENABLE=0",
+      "-DMAGICKCORE_QUANTUM_DEPTH=16",
+      "-I/usr/include/freetype2",
+      "-I/usr/include/libpng16",
+      "-I./include",
+      "-I./common/FreetypeGL",
+      "-std=c++23",
+      "-o",
+      "main",
+      "./common/ogldev_world_transform.cpp"
+    ],
+    "directory": "/home/jorge/Projects/opengl/opengl-renderer",
+    "file": "/home/jorge/Projects/opengl/opengl-renderer/common/ogldev_world_transform.cpp",
     "output": "/home/jorge/Projects/opengl/opengl-renderer/main"
   }
 ]

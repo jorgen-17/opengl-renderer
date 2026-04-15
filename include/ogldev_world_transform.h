@@ -51,5 +51,4 @@ class WorldTrans {
     Vector3f m_pos      = Vector3f(0.0f, 0.0f, 0.0f);
 };
 
-
 #endif

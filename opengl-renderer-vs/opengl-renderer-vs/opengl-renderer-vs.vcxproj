@@ -149,24 +149,22 @@
     <ClCompile Include="..\..\common\camera.cpp" />
     <ClCompile Include="..\..\common\glut_backend.cpp" />
     <ClCompile Include="..\..\common\math_3d.cpp" />
+    <ClCompile Include="..\..\common\pipeline.cpp" />
+    <ClCompile Include="..\..\common\technique.cpp" />
     <ClCompile Include="..\..\common\ogldev_app.cpp" />
     <ClCompile Include="..\..\common\ogldev_atb.cpp" />
     <ClCompile Include="..\..\common\ogldev_basic_lighting.cpp" />
     <ClCompile Include="..\..\common\ogldev_shadow_map_fbo.cpp" />
     <ClCompile Include="..\..\common\ogldev_texture.cpp" />
     <ClCompile Include="..\..\common\ogldev_util.cpp" />
-    <ClCompile Include="..\..\common\pipeline.cpp" />
-    <ClCompile Include="..\..\common\technique.cpp" />
+    <ClCompile Include="..\..\common\ogldev_world_transform" />
     <ClCompile Include="..\..\main.cpp" />
-    <ClCompile Include="..\..\mesh.cpp" />
-    <ClCompile Include="..\..\lighting_technique.cpp" />
-    <ClCompile Include="..\..\shadow_map_technique.cpp" />
+    <ClCompile Include="..\..\skinned_mesh.cpp" />
+    <ClCompile Include="..\..\skinning_technique.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\lighting.fs" />
-    <None Include="..\..\lighting.vs" />
-    <None Include="..\..\shadow_map.fs" />
-    <None Include="..\..\shadow_map.vs" />
+    <None Include="..\..\skinning.fs" />
+    <None Include="..\..\skinning.vs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

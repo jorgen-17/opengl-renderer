@@ -238,3 +238,11 @@ void Camera::Update()
     m_up = m_target.Cross(Haxis);
     m_up.Normalize();
 }
+
+Matrix4f Camera::GetMatrix()
+{
+    Matrix4f CameraTransformation;
+    CameraTransformation.InitCameraTransform(m_pos, m_target, m_up);
+
+    return CameraTransformation;
+}

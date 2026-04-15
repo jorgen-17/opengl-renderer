@@ -36,6 +36,8 @@ public:
 
     void OnRender();
 
+    Matrix4f GetMatrix();
+
     const Vector3f& GetPos() const
     {
         return m_pos;
@@ -50,6 +52,8 @@ public:
     {
         return m_up;
     }
+
+
     
     //void AddToATB(TwBar* bar);
 

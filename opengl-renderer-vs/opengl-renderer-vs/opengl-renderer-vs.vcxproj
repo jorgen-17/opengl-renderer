@@ -157,7 +157,7 @@
     <ClCompile Include="..\..\common\ogldev_shadow_map_fbo.cpp" />
     <ClCompile Include="..\..\common\ogldev_texture.cpp" />
     <ClCompile Include="..\..\common\ogldev_util.cpp" />
-    <ClCompile Include="..\..\common\ogldev_world_transform" />
+    <ClCompile Include="..\..\common\ogldev_world_transform.cpp" />
     <ClCompile Include="..\..\main.cpp" />
     <ClCompile Include="..\..\skinned_mesh.cpp" />
     <ClCompile Include="..\..\skinning_technique.cpp" />

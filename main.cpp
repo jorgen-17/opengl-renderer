@@ -23,11 +23,11 @@ int IsGLVersionHigher(int MajorVer, int MinorVer)
     return false;
 }
 
-class Tutorial25
+class Tutorial27
 {
 public:
-    Tutorial25();
-    ~Tutorial25();
+    Tutorial27();
+    ~Tutorial27();
 
     bool Init();
 
@@ -43,11 +43,9 @@ private:
     SkinningTechnique* pSkinningTech = NULL;
     PointLight pointLights[SkinningTechnique::MAX_POINT_LIGHTS];
     SpotLight spotLights[SkinningTechnique::MAX_SPOT_LIGHTS];
-    long long StartTime = 0;
-    int DisplayBoneIndex = 0;
 };
 
-Tutorial25::Tutorial25()
+Tutorial27::Tutorial27()
 {
     GLclampf Red = 0.0f, Green = 0.0f, Blue = 0.0f, Alpha = 0.0f;
     glClearColor(Red, Green, Blue, Alpha);
@@ -86,7 +84,7 @@ Tutorial25::Tutorial25()
     spotLights[1].Cutoff = 30.0f;
 }
 
-Tutorial25::~Tutorial25()
+Tutorial27::~Tutorial27()
 {
     if (pGameCamera) {
         delete pGameCamera;
@@ -97,7 +95,7 @@ Tutorial25::~Tutorial25()
     }
 }
 
-bool Tutorial25::Init()
+bool Tutorial27::Init()
 {
     Vector3f CameraPos(0.0f, 5.0f, -8.0f);
     Vector3f CameraTarget(0.0f, -0.5f, 1.0f);
@@ -122,21 +120,18 @@ bool Tutorial25::Init()
 
     pSkinningTech->SetTextureUnit(COLOR_TEXTURE_UNIT_INDEX);
     pSkinningTech->SetSpecularExponentTextureUnit(SPECULAR_EXPONENT_UNIT_INDEX);
-    pSkinningTech->SetDisplayBoneIndex(DisplayBoneIndex);
-
-    StartTime = GetCurrentTimeMillis();
 
     return true;
 }
 
-void Tutorial25::RenderSceneCB()
+void Tutorial27::RenderSceneCB()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     pGameCamera->OnRender();
 
     WorldTrans& worldTransform = pMesh1->GetWorldTransform();
 
-    worldTransform.SetRotation(90.0f, 180.0f, 0.0f);
+    worldTransform.SetRotation(0.0f, 180.0f, 0.0f);
     worldTransform.SetPosition(0.0f, 0.0f, 10.0f);
     worldTransform.SetScale(0.1f);
 
@@ -174,7 +169,12 @@ void Tutorial25::RenderSceneCB()
     Vector3f CameraLocalPos3f = worldTransform.WorldPosToLocalPos(pGameCamera->GetPos());
     pSkinningTech->SetCameraLocalPos(CameraLocalPos3f);
 
-    long long CurrentTime = GetCurrentTimeMillis();
+    vector<Matrix4f> Transforms;
+    pMesh1->GetBoneTransforms(Transforms);
+
+    for (uint i = 0 ; i < Transforms.size() ; i++) {
+        pSkinningTech->SetBoneTransform(i, Transforms[i]);
+    }
 
     pMesh1->Render();
 
@@ -186,18 +186,12 @@ void Tutorial25::RenderSceneCB()
 
 #define ANGLE_STEP 1.0f
 
-void Tutorial25::KeyboardCB(OGLDEV_KEY key, int mouse_x, int mouse_y)
+void Tutorial27::KeyboardCB(OGLDEV_KEY key, int mouse_x, int mouse_y)
 {
     switch (key) {
     case 'q':
     case 27:    // escape key code
         exit(0);
-
-    case ' ':
-        DisplayBoneIndex++;
-        DisplayBoneIndex = DisplayBoneIndex % pMesh1->NumBones();
-        pSkinningTech->SetDisplayBoneIndex(DisplayBoneIndex);
-        break;
 
     case 'a':
         pointLights[0].Attenuation.Linear += ATTEN_STEP;
@@ -239,44 +233,44 @@ void Tutorial25::KeyboardCB(OGLDEV_KEY key, int mouse_x, int mouse_y)
     pGameCamera->OnKeyboard(key);
 }
 
-void Tutorial25::SpecialKeyboardCB(OGLDEV_KEY key, int mouse_x, int mouse_y)
+void Tutorial27::SpecialKeyboardCB(OGLDEV_KEY key, int mouse_x, int mouse_y)
 {
     pGameCamera->OnKeyboard(key);
 }
 
 
-void Tutorial25::PassiveMouseCB(int x, int y)
+void Tutorial27::PassiveMouseCB(int x, int y)
 {
     pGameCamera->OnMouse(x, y);
 }
 
 
-Tutorial25* pTutorial25 = NULL;
+Tutorial27* pTutorial27 = NULL;
 
 
 void RenderSceneCB()
 {
-    pTutorial25->RenderSceneCB();
+    pTutorial27->RenderSceneCB();
 }
 
 
 void KeyboardCB(unsigned char key, int mouse_x, int mouse_y)
 {
     OGLDEV_KEY OgldevKey = (OGLDEV_KEY)key;
-    pTutorial25->KeyboardCB(OgldevKey, mouse_x, mouse_y);
+    pTutorial27->KeyboardCB(OgldevKey, mouse_x, mouse_y);
 }
 
 
 void SpecialKeyboardCB(int key, int mouse_x, int mouse_y)
 {
     OGLDEV_KEY OgldevKey = GLUTKeyToOGLDEVKey(key);
-    pTutorial25->SpecialKeyboardCB(OgldevKey, mouse_x, mouse_y);
+    pTutorial27->SpecialKeyboardCB(OgldevKey, mouse_x, mouse_y);
 }
 
 
 void PassiveMouseCB(int x, int y)
 {
-    pTutorial25->PassiveMouseCB(x, y);
+    pTutorial27->PassiveMouseCB(x, y);
 }
 
 
@@ -296,7 +290,7 @@ int main(int argc, char** argv)
     glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGBA|GLUT_DEPTH);
     glutInitWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);
 
-    const char* pTitle = "Tutorial 25";
+    const char* pTitle = "Tutorial 27";
     if (fullscreen) {
         if (wsl) {
             glutInitWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -323,9 +317,9 @@ int main(int argc, char** argv)
 
     InitializeGlutCallbacks();
 
-    pTutorial25 = new Tutorial25();
+    pTutorial27 = new Tutorial27();
 
-    if (!pTutorial25->Init()) {
+    if (!pTutorial27->Init()) {
         return 1;
     }
 

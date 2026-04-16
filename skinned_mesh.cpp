@@ -55,14 +55,12 @@ bool SkinnedMesh::LoadMesh(const string& Filename)
     glGenBuffers(ARRAY_SIZE_IN_ELEMENTS(m_Buffers), m_Buffers);
 
     bool Ret = false;
-    Assimp::Importer Importer;
 
-    const aiScene* pScene = Importer.ReadFile(Filename.c_str(), ASSIMP_LOAD_FLAGS);
+    pScene = Importer.ReadFile(Filename.c_str(), ASSIMP_LOAD_FLAGS);
 
     if (pScene) {
         Ret = InitFromScene(pScene, Filename);
-    }
-    else {
+    } else {
         printf("Error parsing '%s': '%s'\n", Filename.c_str(), Importer.GetErrorString());
     }
 
@@ -171,6 +169,12 @@ void SkinnedMesh::LoadSingleBone(uint MeshIndex, const aiBone* pBone)
 {
     int BoneId = GetBoneId(pBone);
 
+    // bone not in collection yet, so add it to the end
+    if (BoneId == (int)m_BoneInfo.size()) {
+        BoneInfo bi(pBone->mOffsetMatrix);
+        m_BoneInfo.push_back(bi);
+    }
+
     for (uint i = 0; i < pBone->mNumWeights; i++) {
         const aiVertexWeight& vw = pBone->mWeights[i];
         uint GlobalVertexID = m_Meshes[MeshIndex].BaseVertex + pBone->mWeights[i].mVertexId;
@@ -187,8 +191,7 @@ int SkinnedMesh::GetBoneId(const aiBone* pBone)
         // Allocate an index for a new bone
         BoneIndex = (int)m_BoneNameToIndexMap.size();
         m_BoneNameToIndexMap[BoneName] = BoneIndex;
-    }
-    else {
+    } else {
         BoneIndex = m_BoneNameToIndexMap[BoneName];
     }
 
@@ -386,4 +389,39 @@ const Material& SkinnedMesh::GetMaterial()
     }
 
     return m_Materials[0];
+}
+
+void SkinnedMesh::GetBoneTransforms(vector<Matrix4f>& Transforms)
+{
+    Transforms.resize(m_BoneInfo.size());
+
+    Matrix4f Identity;
+    Identity.InitIdentity();
+
+    ReadNodeHierarchy(pScene->mRootNode, Identity);
+
+    for (uint i = 0; i < m_BoneInfo.size(); i++) {
+        Transforms[i] = m_BoneInfo[i].FinalTransformation;
+    }
+}
+
+
+void SkinnedMesh::ReadNodeHierarchy(const aiNode* pNode, const Matrix4f& ParentTransform)
+{
+    string NodeName(pNode->mName.data);
+
+    Matrix4f NodeTransformation(pNode->mTransformation);
+
+    //printf("%s - ", NodeName.c_str());
+
+    Matrix4f GlobalTransformation = ParentTransform * NodeTransformation;
+
+    if (m_BoneNameToIndexMap.find(NodeName) != m_BoneNameToIndexMap.end()) {
+        uint BoneIndex = m_BoneNameToIndexMap[NodeName];
+        m_BoneInfo[BoneIndex].FinalTransformation = GlobalTransformation * m_BoneInfo[BoneIndex].OffsetMatrix;
+    }
+
+    for (uint i = 0; i < pNode->mNumChildren; i++) {
+        ReadNodeHierarchy(pNode->mChildren[i], GlobalTransformation);
+    }
 }

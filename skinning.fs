@@ -61,7 +61,6 @@ uniform Material gMaterial;
 uniform sampler2D gSampler;
 uniform sampler2D gSamplerSpecularExponent;
 uniform vec3 gCameraLocalPos;
-uniform int gDisplayBoneIndex;
 
 vec4 CalcLightInternal(BaseLight Light, vec3 LightDirection, vec3 Normal)
 {

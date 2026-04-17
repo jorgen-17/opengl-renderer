@@ -52,7 +52,7 @@ public:
 
     const Material& GetMaterial();
 
-    void GetBoneTransforms(vector<Matrix4f>& Transforms);
+    void GetBoneTransforms(float AnimationTimeSec, vector<Matrix4f>& Transforms);
 
 private:
     #define MAX_NUM_BONES_PER_VERTEX 4
@@ -109,7 +109,14 @@ private:
     void LoadMeshBones(uint MeshIndex, const aiMesh* paiMesh);
     void LoadSingleBone(uint MeshIndex, const aiBone* pBone);
     int GetBoneId(const aiBone* pBone);
-    void ReadNodeHierarchy(const aiNode* pNode, const Matrix4f& ParentTransform);
+    void CalcInterpolatedScaling(aiVector3D& Out, float AnimationTime, const aiNodeAnim* pNodeAnim);
+    void CalcInterpolatedRotation(aiQuaternion& Out, float AnimationTime, const aiNodeAnim* pNodeAnim);
+    void CalcInterpolatedPosition(aiVector3D& Out, float AnimationTime, const aiNodeAnim* pNodeAnim);
+    uint FindScaling(float AnimationTime, const aiNodeAnim* pNodeAnim);
+    uint FindRotation(float AnimationTime, const aiNodeAnim* pNodeAnim);
+    uint FindPosition(float AnimationTime, const aiNodeAnim* pNodeAnim);
+    const aiNodeAnim* FindNodeAnim(const aiAnimation* pAnimation, const string& NodeName);
+    void ReadNodeHierarchy(float AnimationTime, const aiNode* pNode, const Matrix4f& ParentTransform);
 
 #define INVALID_MATERIAL 0xFFFFFFFF
 
@@ -168,6 +175,7 @@ private:
     };
 
     vector<BoneInfo> m_BoneInfo;
+    Matrix4f m_GlobalInverseTransform;
 };
 
 #endif  /* SKINNED_MESH_H */

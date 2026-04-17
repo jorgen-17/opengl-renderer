@@ -16,3 +16,4 @@ features I'd like to add:
 5. save and load scenes
 6. grid
 7. blender materials
+8. cell shading

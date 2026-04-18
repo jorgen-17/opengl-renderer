@@ -23,11 +23,11 @@ int IsGLVersionHigher(int MajorVer, int MinorVer)
     return false;
 }
 
-class Tutorial29
+class Tutorial30
 {
 public:
-    Tutorial29();
-    ~Tutorial29();
+    Tutorial30();
+    ~Tutorial30();
 
     bool Init();
 
@@ -46,7 +46,7 @@ private:
     long long StartTimeMillis = 0;
 };
 
-Tutorial29::Tutorial29()
+Tutorial30::Tutorial30()
 {
     GLclampf Red = 0.0f, Green = 0.0f, Blue = 0.0f, Alpha = 0.0f;
     glClearColor(Red, Green, Blue, Alpha);
@@ -85,7 +85,7 @@ Tutorial29::Tutorial29()
     spotLights[1].Cutoff = 30.0f;
 }
 
-Tutorial29::~Tutorial29()
+Tutorial30::~Tutorial30()
 {
     if (pGameCamera) {
         delete pGameCamera;
@@ -96,7 +96,7 @@ Tutorial29::~Tutorial29()
     }
 }
 
-bool Tutorial29::Init()
+bool Tutorial30::Init()
 {
     Vector3f CameraPos(0.0f, 5.0f, -8.0f);
     Vector3f CameraTarget(0.0f, -0.5f, 1.0f);
@@ -127,7 +127,7 @@ bool Tutorial29::Init()
     return true;
 }
 
-void Tutorial29::RenderSceneCB()
+void Tutorial30::RenderSceneCB()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     pGameCamera->OnRender();
@@ -179,31 +179,9 @@ void Tutorial29::RenderSceneCB()
         pSkinningTech->SetBoneTransform(i, Transforms[i]);
     }
 
-    glViewport(0, 0, WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2);
-    Camera Camera1(WINDOW_WIDTH, WINDOW_HEIGHT, Vector3f(0.0f, 0.0f, -10.0f), Vector3f(0.0f, 0.0f, 1.0f), Vector3f(0.0f, 1.0f, 0.0f));
-    Matrix4f View = Camera1.GetMatrix();
+    pGameCamera = new Camera(WINDOW_WIDTH, WINDOW_HEIGHT, Vector3f(0.0f, 0.0f, -10.0f), Vector3f(0.0f, 0.0f, 1.0f), Vector3f(0.0f, 1.0f, 0.0f));
+    Matrix4f View = pGameCamera->GetMatrix();
     Matrix4f WVP = Projection * View * World;
-    pSkinningTech->SetWVP(WVP);
-    pMesh1->Render();
-
-    glViewport(0, WINDOW_HEIGHT / 2, WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2);
-    Camera Camera2(WINDOW_WIDTH, WINDOW_HEIGHT, Vector3f(0.0f, 0.0f, 10.0f), Vector3f(0.0f, 0.0f, -1.0f), Vector3f(0.0f, 1.0f, 0.0f));
-    View = Camera2.GetMatrix();
-    WVP = Projection * View * World;
-    pSkinningTech->SetWVP(WVP);
-    pMesh1->Render();
-
-    glViewport(WINDOW_WIDTH / 2, 0, WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2);
-    Camera Camera3(WINDOW_WIDTH, WINDOW_HEIGHT, Vector3f(10.0f, 0.0f, 0.0f), Vector3f(-1.0f, 0.0f, 0.0f), Vector3f(0.0f, 1.0f, 0.0f));
-    View = Camera3.GetMatrix();
-    WVP = Projection * View * World;
-    pSkinningTech->SetWVP(WVP);
-    pMesh1->Render();
-
-    glViewport(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2);
-    Camera Camera4(WINDOW_WIDTH, WINDOW_HEIGHT, Vector3f(-10.0f, 0.0f, 0.0f), Vector3f(1.0f, 0.0f, 0.0f), Vector3f(0.0f, 1.0f, 0.0f));
-    View = Camera4.GetMatrix();
-    WVP = Projection * View * World;
     pSkinningTech->SetWVP(WVP);
     pMesh1->Render();
 
@@ -215,7 +193,7 @@ void Tutorial29::RenderSceneCB()
 
 #define ANGLE_STEP 1.0f
 
-void Tutorial29::KeyboardCB(OGLDEV_KEY key, int mouse_x, int mouse_y)
+void Tutorial30::KeyboardCB(OGLDEV_KEY key, int mouse_x, int mouse_y)
 {
     switch (key) {
     case 'q':
@@ -262,44 +240,44 @@ void Tutorial29::KeyboardCB(OGLDEV_KEY key, int mouse_x, int mouse_y)
     pGameCamera->OnKeyboard(key);
 }
 
-void Tutorial29::SpecialKeyboardCB(OGLDEV_KEY key, int mouse_x, int mouse_y)
+void Tutorial30::SpecialKeyboardCB(OGLDEV_KEY key, int mouse_x, int mouse_y)
 {
     pGameCamera->OnKeyboard(key);
 }
 
 
-void Tutorial29::PassiveMouseCB(int x, int y)
+void Tutorial30::PassiveMouseCB(int x, int y)
 {
     pGameCamera->OnMouse(x, y);
 }
 
 
-Tutorial29* pTutorial29 = NULL;
+Tutorial30* pTutorial30 = NULL;
 
 
 void RenderSceneCB()
 {
-    pTutorial29->RenderSceneCB();
+    pTutorial30->RenderSceneCB();
 }
 
 
 void KeyboardCB(unsigned char key, int mouse_x, int mouse_y)
 {
     OGLDEV_KEY OgldevKey = (OGLDEV_KEY)key;
-    pTutorial29->KeyboardCB(OgldevKey, mouse_x, mouse_y);
+    pTutorial30->KeyboardCB(OgldevKey, mouse_x, mouse_y);
 }
 
 
 void SpecialKeyboardCB(int key, int mouse_x, int mouse_y)
 {
     OGLDEV_KEY OgldevKey = GLUTKeyToOGLDEVKey(key);
-    pTutorial29->SpecialKeyboardCB(OgldevKey, mouse_x, mouse_y);
+    pTutorial30->SpecialKeyboardCB(OgldevKey, mouse_x, mouse_y);
 }
 
 
 void PassiveMouseCB(int x, int y)
 {
-    pTutorial29->PassiveMouseCB(x, y);
+    pTutorial30->PassiveMouseCB(x, y);
 }
 
 
@@ -344,11 +322,24 @@ int main(int argc, char** argv)
         return 1;
     }
 
+    glEnable(GL_DEBUG_OUTPUT);
+    glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+    glDebugMessageCallback(glDebugOutput, nullptr);
+    glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
+
+    int flags = 0;
+    glGetIntegerv(GL_CONTEXT_FLAGS, &flags);
+    printf("%x\n", flags);
+    if (flags & GL_CONTEXT_FLAG_DEBUG_BIT) {
+        // initialize debug output
+        exit(0);
+    }
+
     InitializeGlutCallbacks();
 
-    pTutorial29 = new Tutorial29();
+    pTutorial30 = new Tutorial30();
 
-    if (!pTutorial29->Init()) {
+    if (!pTutorial30->Init()) {
         return 1;
     }
 

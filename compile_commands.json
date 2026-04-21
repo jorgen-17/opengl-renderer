@@ -39,10 +39,10 @@
       "-std=c++23",
       "-o",
       "main",
-      "skinning_technique.cpp"
+      "picking_technique.cpp"
     ],
     "directory": "/home/jorge/Projects/opengl/opengl-renderer",
-    "file": "/home/jorge/Projects/opengl/opengl-renderer/skinning_technique.cpp",
+    "file": "/home/jorge/Projects/opengl/opengl-renderer/picking_technique.cpp",
     "output": "/home/jorge/Projects/opengl/opengl-renderer/main"
   },
   {
@@ -62,10 +62,148 @@
       "-std=c++23",
       "-o",
       "main",
-      "skinned_mesh.cpp"
+      "picking_texture.cpp"
     ],
     "directory": "/home/jorge/Projects/opengl/opengl-renderer",
-    "file": "/home/jorge/Projects/opengl/opengl-renderer/skinned_mesh.cpp",
+    "file": "/home/jorge/Projects/opengl/opengl-renderer/picking_texture.cpp",
+    "output": "/home/jorge/Projects/opengl/opengl-renderer/main"
+  },
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-c",
+      "-g",
+      "-I/usr/include/x86_64-linux-gnu/ImageMagick-6",
+      "-I/usr/include/ImageMagick-6",
+      "-fopenmp",
+      "-DMAGICKCORE_HDRI_ENABLE=0",
+      "-DMAGICKCORE_QUANTUM_DEPTH=16",
+      "-I/usr/include/freetype2",
+      "-I/usr/include/libpng16",
+      "-I./include",
+      "-I./common/FreetypeGL",
+      "-std=c++23",
+      "-o",
+      "main",
+      "simple_color_technique.cpp"
+    ],
+    "directory": "/home/jorge/Projects/opengl/opengl-renderer",
+    "file": "/home/jorge/Projects/opengl/opengl-renderer/simple_color_technique.cpp",
+    "output": "/home/jorge/Projects/opengl/opengl-renderer/main"
+  },
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-c",
+      "-g",
+      "-I/usr/include/x86_64-linux-gnu/ImageMagick-6",
+      "-I/usr/include/ImageMagick-6",
+      "-fopenmp",
+      "-DMAGICKCORE_HDRI_ENABLE=0",
+      "-DMAGICKCORE_QUANTUM_DEPTH=16",
+      "-I/usr/include/freetype2",
+      "-I/usr/include/libpng16",
+      "-I./include",
+      "-I./common/FreetypeGL",
+      "-std=c++23",
+      "-o",
+      "main",
+      "./common/ogldev_basic_glfw_camera.cpp"
+    ],
+    "directory": "/home/jorge/Projects/opengl/opengl-renderer",
+    "file": "/home/jorge/Projects/opengl/opengl-renderer/common/ogldev_basic_glfw_camera.cpp",
+    "output": "/home/jorge/Projects/opengl/opengl-renderer/main"
+  },
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-c",
+      "-g",
+      "-I/usr/include/x86_64-linux-gnu/ImageMagick-6",
+      "-I/usr/include/ImageMagick-6",
+      "-fopenmp",
+      "-DMAGICKCORE_HDRI_ENABLE=0",
+      "-DMAGICKCORE_QUANTUM_DEPTH=16",
+      "-I/usr/include/freetype2",
+      "-I/usr/include/libpng16",
+      "-I./include",
+      "-I./common/FreetypeGL",
+      "-std=c++23",
+      "-o",
+      "main",
+      "./common/ogldev_basic_mesh.cpp"
+    ],
+    "directory": "/home/jorge/Projects/opengl/opengl-renderer",
+    "file": "/home/jorge/Projects/opengl/opengl-renderer/common/ogldev_basic_mesh.cpp",
+    "output": "/home/jorge/Projects/opengl/opengl-renderer/main"
+  },
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-c",
+      "-g",
+      "-I/usr/include/x86_64-linux-gnu/ImageMagick-6",
+      "-I/usr/include/ImageMagick-6",
+      "-fopenmp",
+      "-DMAGICKCORE_HDRI_ENABLE=0",
+      "-DMAGICKCORE_QUANTUM_DEPTH=16",
+      "-I/usr/include/freetype2",
+      "-I/usr/include/libpng16",
+      "-I./include",
+      "-I./common/FreetypeGL",
+      "-std=c++23",
+      "-o",
+      "main",
+      "./common/ogldev_glfw.cpp"
+    ],
+    "directory": "/home/jorge/Projects/opengl/opengl-renderer",
+    "file": "/home/jorge/Projects/opengl/opengl-renderer/common/ogldev_glfw.cpp",
+    "output": "/home/jorge/Projects/opengl/opengl-renderer/main"
+  },
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-c",
+      "-g",
+      "-I/usr/include/x86_64-linux-gnu/ImageMagick-6",
+      "-I/usr/include/ImageMagick-6",
+      "-fopenmp",
+      "-DMAGICKCORE_HDRI_ENABLE=0",
+      "-DMAGICKCORE_QUANTUM_DEPTH=16",
+      "-I/usr/include/freetype2",
+      "-I/usr/include/libpng16",
+      "-I./include",
+      "-I./common/FreetypeGL",
+      "-std=c++23",
+      "-o",
+      "main",
+      "./common/ogldev_glm_camera.cpp"
+    ],
+    "directory": "/home/jorge/Projects/opengl/opengl-renderer",
+    "file": "/home/jorge/Projects/opengl/opengl-renderer/common/ogldev_glm_camera.cpp",
+    "output": "/home/jorge/Projects/opengl/opengl-renderer/main"
+  },
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-c",
+      "-g",
+      "-I/usr/include/x86_64-linux-gnu/ImageMagick-6",
+      "-I/usr/include/ImageMagick-6",
+      "-fopenmp",
+      "-DMAGICKCORE_HDRI_ENABLE=0",
+      "-DMAGICKCORE_QUANTUM_DEPTH=16",
+      "-I/usr/include/freetype2",
+      "-I/usr/include/libpng16",
+      "-I./include",
+      "-I./common/FreetypeGL",
+      "-std=c++23",
+      "-o",
+      "main",
+      "./common/ogldev_glfw_camera_handler.cpp"
+    ],
+    "directory": "/home/jorge/Projects/opengl/opengl-renderer",
+    "file": "/home/jorge/Projects/opengl/opengl-renderer/common/ogldev_glfw_camera_handler.cpp",
     "output": "/home/jorge/Projects/opengl/opengl-renderer/main"
   },
   {
@@ -200,29 +338,6 @@
       "-std=c++23",
       "-o",
       "main",
-      "./common/glut_backend.cpp"
-    ],
-    "directory": "/home/jorge/Projects/opengl/opengl-renderer",
-    "file": "/home/jorge/Projects/opengl/opengl-renderer/common/glut_backend.cpp",
-    "output": "/home/jorge/Projects/opengl/opengl-renderer/main"
-  },
-  {
-    "arguments": [
-      "/usr/bin/g++",
-      "-c",
-      "-g",
-      "-I/usr/include/x86_64-linux-gnu/ImageMagick-6",
-      "-I/usr/include/ImageMagick-6",
-      "-fopenmp",
-      "-DMAGICKCORE_HDRI_ENABLE=0",
-      "-DMAGICKCORE_QUANTUM_DEPTH=16",
-      "-I/usr/include/freetype2",
-      "-I/usr/include/libpng16",
-      "-I./include",
-      "-I./common/FreetypeGL",
-      "-std=c++23",
-      "-o",
-      "main",
       "./common/ogldev_texture.cpp"
     ],
     "directory": "/home/jorge/Projects/opengl/opengl-renderer",
@@ -250,6 +365,29 @@
     ],
     "directory": "/home/jorge/Projects/opengl/opengl-renderer",
     "file": "/home/jorge/Projects/opengl/opengl-renderer/common/ogldev_basic_lighting.cpp",
+    "output": "/home/jorge/Projects/opengl/opengl-renderer/main"
+  },
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-c",
+      "-g",
+      "-I/usr/include/x86_64-linux-gnu/ImageMagick-6",
+      "-I/usr/include/ImageMagick-6",
+      "-fopenmp",
+      "-DMAGICKCORE_HDRI_ENABLE=0",
+      "-DMAGICKCORE_QUANTUM_DEPTH=16",
+      "-I/usr/include/freetype2",
+      "-I/usr/include/libpng16",
+      "-I./include",
+      "-I./common/FreetypeGL",
+      "-std=c++23",
+      "-o",
+      "main",
+      "./common/ogldev_new_lighting.cpp"
+    ],
+    "directory": "/home/jorge/Projects/opengl/opengl-renderer",
+    "file": "/home/jorge/Projects/opengl/opengl-renderer/common/ogldev_new_lighting.cpp",
     "output": "/home/jorge/Projects/opengl/opengl-renderer/main"
   },
   {

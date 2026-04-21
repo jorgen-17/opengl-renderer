@@ -1,6 +1,6 @@
 /*
 
-	Copyright 2011 Etay Meiri
+        Copyright 2022 Etay Meiri
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -16,23 +16,13 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef GLUT_BACKEND_H
-#define	GLUT_BACKEND_H
+#ifndef OGLDEV_GLFW_H
+#define OGLDEV_GLFW_H
 
-#include "ogldev_types.h"
-#include "ogldev_callbacks.h"
+#include <GL/glew.h>
+#define GLFW_DLL
+#include <GLFW/glfw3.h>
 
-void GLUTBackendInit(int argc, char** argv, bool WithDepth, bool WithStencil);
+GLFWwindow* glfw_init(int major_ver, int minor_ver, int width, int height, bool is_full_screen, const char* title);
 
-bool GLUTBackendCreateWindow(uint Width, uint Height, bool isFullScreen, bool isWsl, const char* pTitle);
-
-void GLUTBackendRun(ICallbacks* pCallbacks);
-
-void GLUTBackendSwapBuffers();
-
-void GLUTBackendLeaveMainLoop();
-
-OGLDEV_KEY GLUTKeyToOGLDEVKey(uint Key);
-
-#endif	/* GLUT_BACKEND_H */
-
+#endif

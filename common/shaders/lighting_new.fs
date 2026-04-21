@@ -16,7 +16,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 #version 420
 
 const int MAX_POINT_LIGHTS = 2;
@@ -74,10 +73,9 @@ struct Material
 };
 
 struct PBRLight {
-    vec4 PosDir;   // if w == 1 position, else direction
+    vec4 PosDir; // if w == 1 position, else direction
     vec3 Intensity;
 };
-
 
 struct PBRMaterial
 {
@@ -95,8 +93,8 @@ uniform SpotLight gSpotLights[MAX_SPOT_LIGHTS];
 uniform Material gMaterial;
 layout(binding = 0) uniform sampler2D gSampler;
 layout(binding = 1) uniform sampler2D gSamplerSpecularExponent;
-layout(binding = 2) uniform sampler2D gShadowMap;        // required only for shadow mapping (spot/directional light)
-layout(binding = 3) uniform samplerCube gShadowCubeMap;  // required only for shadow mapping (point light)
+layout(binding = 2) uniform sampler2D gShadowMap; // required only for shadow mapping (spot/directional light)
+layout(binding = 3) uniform samplerCube gShadowCubeMap; // required only for shadow mapping (point light)
 layout(binding = 4) uniform sampler3D gShadowMapOffsetTexture;
 layout(binding = 5) uniform sampler2D gAlbedo;
 layout(binding = 6) uniform sampler2D gRoughness;
@@ -142,7 +140,6 @@ float CalcRimLightFactor(vec3 PixelToCamera, vec3 Normal)
     return RimFactor;
 }
 
-
 float CalcShadowFactorPointLight(vec3 LightToPixel)
 {
     float Distance = length(LightToPixel);
@@ -159,14 +156,12 @@ float CalcShadowFactorPointLight(vec3 LightToPixel)
         return 1.0;
 }
 
-
 vec3 CalcShadowCoords()
 {
     vec3 ProjCoords = LightSpacePos0.xyz / LightSpacePos0.w;
     vec3 ShadowCoords = ProjCoords * 0.5 + vec3(0.5);
     return ShadowCoords;
 }
-
 
 float CalcShadowFactorBasic(vec3 LightDirection, vec3 Normal)
 {
@@ -183,7 +178,6 @@ float CalcShadowFactorBasic(vec3 LightDirection, vec3 Normal)
     else
         return 1.0;
 }
-
 
 float CalcShadowFactorPCF(vec3 LightDirection, vec3 Normal)
 {
@@ -206,8 +200,8 @@ float CalcShadowFactorPCF(vec3 LightDirection, vec3 Normal)
 
     int HalfFilterSize = gShadowMapFilterSize / 2;
 
-    for (int y = -HalfFilterSize ; y < -HalfFilterSize + gShadowMapFilterSize ; y++) {
-        for (int x = -HalfFilterSize ; x < -HalfFilterSize + gShadowMapFilterSize ; x++) {
+    for (int y = -HalfFilterSize; y < -HalfFilterSize + gShadowMapFilterSize; y++) {
+        for (int x = -HalfFilterSize; x < -HalfFilterSize + gShadowMapFilterSize; x++) {
             vec2 Offset = vec2(x, y) * TexelSize;
             float Depth = texture(gShadowMap, ShadowCoords.xy + Offset).x;
 
@@ -216,14 +210,13 @@ float CalcShadowFactorPCF(vec3 LightDirection, vec3 Normal)
             } else {
                 ShadowSum += 1.0;
             }
-       }
-   }
+        }
+    }
 
-   float FinalShadowFactor = ShadowSum / float(pow(gShadowMapFilterSize, 2));
+    float FinalShadowFactor = ShadowSum / float(pow(gShadowMapFilterSize, 2));
 
-   return FinalShadowFactor;
+    return FinalShadowFactor;
 }
-
 
 float CalcShadowFactorWithRandomSampling(vec3 LightDirection, vec3 Normal)
 {
@@ -244,46 +237,46 @@ float CalcShadowFactorWithRandomSampling(vec3 LightDirection, vec3 Normal)
     float bias = mix(0.001, 0.0, DiffuseFactor);
     float Depth = 0.0;
 
-    for (int i = 0 ; i < 4 ; i++) {
+    for (int i = 0; i < 4; i++) {
         OffsetCoord.x = i;
         vec4 Offsets = texelFetch(gShadowMapOffsetTexture, OffsetCoord, 0) * gShadowMapRandomRadius;
         sc.xy = ShadowCoords.xy + Offsets.rg * TexelSize;
         Depth = texture(gShadowMap, sc.xy).x;
         if (Depth + bias < ShadowCoords.z) {
-           Sum += 0.0;
+            Sum += 0.0;
         } else {
-           Sum += 1.0;
+            Sum += 1.0;
         }
 
         sc.xy = ShadowCoords.xy + Offsets.ba * TexelSize;
         Depth = texture(gShadowMap, sc.xy).x;
         if (Depth + bias < ShadowCoords.z) {
-           Sum += 0.0;
+            Sum += 0.0;
         } else {
-           Sum += 1.0;
+            Sum += 1.0;
         }
     }
 
     float Shadow = Sum / 8.0;
 
     if (Shadow != 0.0 && Shadow != 1.0) {
-        for (int i = 4 ; i < SamplesDiv2 ; i++) {
+        for (int i = 4; i < SamplesDiv2; i++) {
             OffsetCoord.x = i;
             vec4 Offsets = texelFetch(gShadowMapOffsetTexture, OffsetCoord, 0) * gShadowMapRandomRadius;
             sc.xy = ShadowCoords.xy + Offsets.rg * TexelSize;
             Depth = texture(gShadowMap, sc.xy).x;
             if (Depth + bias < ShadowCoords.z) {
-               Sum += 0.0;
+                Sum += 0.0;
             } else {
-               Sum += 1.0;
+                Sum += 1.0;
             }
 
             sc.xy = ShadowCoords.xy + Offsets.ba * TexelSize;
             Depth = texture(gShadowMap, sc.xy).x;
             if (Depth + bias < ShadowCoords.z) {
-               Sum += 0.0;
+                Sum += 0.0;
             } else {
-               Sum += 1.0;
+                Sum += 1.0;
             }
         }
 
@@ -293,14 +286,13 @@ float CalcShadowFactorWithRandomSampling(vec3 LightDirection, vec3 Normal)
     return Shadow;
 }
 
-
 float CalcShadowFactor(vec3 LightDirection, vec3 Normal)
 {
     float ShadowFactor = 0.0;
 
     if (gShadowMapRandomRadius > 0.0) {
         ShadowFactor = CalcShadowFactorWithRandomSampling(LightDirection, Normal);
-    } else if (gShadowMapFilterSize > 0){
+    } else if (gShadowMapFilterSize > 0) {
         ShadowFactor = CalcShadowFactorPCF(LightDirection, Normal);
     } else {
         ShadowFactor = CalcShadowFactorBasic(LightDirection, Normal);
@@ -310,11 +302,11 @@ float CalcShadowFactor(vec3 LightDirection, vec3 Normal)
 }
 
 vec4 CalcLightInternal(BaseLight Light, vec3 LightDirection, vec3 Normal,
-                       float ShadowFactor)
+    float ShadowFactor)
 {
     vec4 AmbientColor = vec4(Light.Color, 1.0f) *
-                        Light.AmbientIntensity *
-                        vec4(gMaterial.AmbientColor, 1.0f);
+            Light.AmbientIntensity *
+            vec4(gMaterial.AmbientColor, 1.0f);
 
     float DiffuseFactor = dot(Normal, -LightDirection);
 
@@ -328,9 +320,9 @@ vec4 CalcLightInternal(BaseLight Light, vec3 LightDirection, vec3 Normal,
         }
 
         DiffuseColor = vec4(Light.Color, 1.0f) *
-                       Light.DiffuseIntensity *
-                       vec4(gMaterial.DiffuseColor, 1.0f) *
-                       DiffuseFactor;
+                Light.DiffuseIntensity *
+                vec4(gMaterial.DiffuseColor, 1.0f) *
+                DiffuseFactor;
 
         vec3 PixelToCamera = normalize(gCameraLocalPos - LocalPos0);
         vec3 LightReflect = normalize(reflect(LightDirection, Normal));
@@ -345,22 +337,21 @@ vec4 CalcLightInternal(BaseLight Light, vec3 LightDirection, vec3 Normal,
 
             SpecularFactor = pow(SpecularFactor, SpecularExponent);
             SpecularColor = vec4(Light.Color, 1.0f) *
-                            Light.DiffuseIntensity * // using the diffuse intensity for diffuse/specular
-                            vec4(gMaterial.SpecularColor, 1.0f) *
-                            SpecularFactor;
+                    Light.DiffuseIntensity * // using the diffuse intensity for diffuse/specular
+                    vec4(gMaterial.SpecularColor, 1.0f) *
+                    SpecularFactor;
         }
 
         if (gRimLightEnabled) {
-           float RimFactor = CalcRimLightFactor(PixelToCamera, Normal);
-           RimColor = DiffuseColor * RimFactor;
+            float RimFactor = CalcRimLightFactor(PixelToCamera, Normal);
+            RimColor = DiffuseColor * RimFactor;
         }
     }
 
     return (AmbientColor + ShadowFactor * (DiffuseColor + SpecularColor + RimColor));
-   //return vec4(DiffuseFactor);
- // return DiffuseColor;
+    //return vec4(DiffuseFactor);
+    // return DiffuseColor;
 }
-
 
 vec4 CalcDirectionalLight(vec3 Normal)
 {
@@ -368,12 +359,11 @@ vec4 CalcDirectionalLight(vec3 Normal)
     return CalcLightInternal(gDirectionalLight.Base, gDirectionalLight.Direction, Normal, ShadowFactor);
 }
 
-
 vec4 CalcPointLight(PointLight l, vec3 Normal, bool IsSpot)
 {
     vec3 LightWorldDir = WorldPos0 - l.WorldPos;
     float ShadowFactor = 0.0;
-    
+
     if (IsSpot) {
         ShadowFactor = CalcShadowFactor(LightWorldDir, Normal);
     } else {
@@ -384,13 +374,12 @@ vec4 CalcPointLight(PointLight l, vec3 Normal, bool IsSpot)
     float Distance = length(LightLocalDir);
     LightLocalDir = normalize(LightLocalDir);
     vec4 Color = CalcLightInternal(l.Base, LightLocalDir, Normal, ShadowFactor);
-    float Attenuation =  l.Atten.Constant +
-                         l.Atten.Linear * Distance +
-                         l.Atten.Exp * Distance * Distance;
+    float Attenuation = l.Atten.Constant +
+            l.Atten.Linear * Distance +
+            l.Atten.Exp * Distance * Distance;
 
     return Color / Attenuation;
 }
-
 
 vec4 CalcSpotLight(SpotLight l, vec3 Normal)
 {
@@ -399,14 +388,13 @@ vec4 CalcSpotLight(SpotLight l, vec3 Normal)
 
     if (SpotFactor > l.Cutoff) {
         vec4 Color = CalcPointLight(l.Base, Normal, true);
-        float SpotLightIntensity = (1.0 - (1.0 - SpotFactor)/(1.0 - l.Cutoff));
+        float SpotLightIntensity = (1.0 - (1.0 - SpotFactor) / (1.0 - l.Cutoff));
         return Color * SpotLightIntensity;
     }
     else {
-        return vec4(0,0,0,0);
+        return vec4(0, 0, 0, 0);
     }
 }
-
 
 float CalcLinearFogFactor()
 {
@@ -417,7 +405,6 @@ float CalcLinearFogFactor()
     FogFactor = clamp(FogFactor, 0.0, 1.0);
     return FogFactor;
 }
-
 
 float CalcExpFogFactor()
 {
@@ -434,7 +421,6 @@ float CalcExpFogFactor()
     return FogFactor;
 }
 
-
 float CalcLayeredFogFactor()
 {
     vec3 CameraProj = gCameraWorldPos;
@@ -449,19 +435,19 @@ float CalcLayeredFogFactor()
     float DensityIntegral = 0.0f;
 
     if (gCameraWorldPos.y > gLayeredFogTop) { // The camera is above the top of the fog
-        if (WorldPos0.y < gLayeredFogTop) {   // The pixel is inside the fog
+        if (WorldPos0.y < gLayeredFogTop) { // The pixel is inside the fog
             DeltaY = (gLayeredFogTop - WorldPos0.y) / gLayeredFogTop;
             DensityIntegral = DeltaY * DeltaY * 0.5;
-        }                                     // else - the pixel is above the fog - nothing to do
-    } else {                                  // The camera is inside the fog
-        if (WorldPos0.y < gLayeredFogTop) {   // The pixel is inside the fog
+        } // else - the pixel is above the fog - nothing to do
+    } else { // The camera is inside the fog
+        if (WorldPos0.y < gLayeredFogTop) { // The pixel is inside the fog
             DeltaY = abs(gCameraWorldPos.y - WorldPos0.y) / gLayeredFogTop;
             float DeltaCamera = (gLayeredFogTop - gCameraWorldPos.y) / gLayeredFogTop;
             float DensityIntegralCamera = DeltaCamera * DeltaCamera * 0.5;
             float DeltaPixel = (gLayeredFogTop - WorldPos0.y) / gLayeredFogTop;
             float DensityIntegralPixel = DeltaPixel * DeltaPixel * 0.5;
             DensityIntegral = abs(DensityIntegralCamera - DensityIntegralPixel);
-        } else {                              // The pixel is above the fog
+        } else { // The pixel is above the fog
             DeltaY = (gLayeredFogTop - gCameraWorldPos.y) / gLayeredFogTop;
             DensityIntegral = DeltaY * DeltaY * 0.5;
         }
@@ -478,7 +464,6 @@ float CalcLayeredFogFactor()
     return FogFactor;
 }
 
-
 #define PI 3.1415926535897932384626433832795
 
 float CalcAnimatedFogFactor()
@@ -494,23 +479,22 @@ float CalcAnimatedFogFactor()
     float z = WorldPos0.z / 20.0;
 
     float AnimFactor = -(1.0 +
-                         0.5 * cos(5.0 * PI * z + gFogTime) +
-                         0.2 * cos(7.0 * PI * (z + 0.1 * x)) +
-                         0.2 * cos(5.0 * PI * (z - 0.05 * x)) +
-                         0.1 * cos(PI * x) * cos(PI * z / 2.0));
+            0.5 * cos(5.0 * PI * z + gFogTime) +
+            0.2 * cos(7.0 * PI * (z + 0.1 * x)) +
+            0.2 * cos(5.0 * PI * (z - 0.05 * x)) +
+            0.1 * cos(PI * x) * cos(PI * z / 2.0));
 
     float FogFactor = ExpFogFactor + (CameraToPixelDist / gFogEnd) * AnimFactor;
 
     return FogFactor;
 }
 
-
 float CalcFogFactor()
 {
     float FogFactor = 1.0;
 
     if (gFogTime > 0.0) {
-       FogFactor = CalcAnimatedFogFactor();
+        FogFactor = CalcAnimatedFogFactor();
     } else if (gLayeredFogTop > 0.0) {
         FogFactor = CalcLayeredFogFactor();
     } else if (gFogStart >= 0.0) {
@@ -522,17 +506,16 @@ float CalcFogFactor()
     return FogFactor;
 }
 
-
 vec4 CalcPhongLighting()
 {
     vec3 Normal = normalize(Normal0);
     vec4 TotalLight = CalcDirectionalLight(Normal);
 
-    for (int i = 0 ;i < gNumPointLights ;i++) {
+    for (int i = 0; i < gNumPointLights; i++) {
         TotalLight += CalcPointLight(gPointLights[i], Normal, false);
     }
 
-    for (int i = 0 ;i < gNumSpotLights ;i++) {
+    for (int i = 0; i < gNumSpotLights; i++) {
         TotalLight += CalcSpotLight(gSpotLights[i], Normal);
     }
 
@@ -546,28 +529,26 @@ vec4 CalcPhongLighting()
 
     // I'm using gColorMod and gColorAdd to enhance the color in
     // my youtube thumbnails. They are not an integral part of the lighting equation.
-    vec4 FinalColor =  TempColor * gColorMod + gColorAdd;
+    vec4 FinalColor = TempColor * gColorMod + gColorAdd;
 
     return FinalColor;
 }
 
-
 vec3 schlickFresnel(float vDotH, vec3 Albedo)
 {
-    vec3 F0 = vec3(0.04);    
-    
+    vec3 F0 = vec3(0.04);
+
     if (gPBRmaterial.IsAlbedo) {
         float Metallic = texture(gMetallic, TexCoord0.xy).x;
         F0 = mix(F0, Albedo, Metallic);
     } else if (gPBRmaterial.IsMetal) {
-	    F0 = gPBRmaterial.Color;	    
+        F0 = gPBRmaterial.Color;
     }
 
     vec3 ret = F0 + (1 - F0) * pow(clamp(1.0 - vDotH, 0.0, 1.0), 5);
 
     return ret;
 }
-
 
 float GetRoughness()
 {
@@ -578,14 +559,12 @@ float GetRoughness()
     }
 }
 
-
 float geomSmith(float dp, float Roughness)
 {
     float k = (Roughness + 1.0) * (Roughness + 1.0) / 8.0;
     float denom = dp * (1 - k) + k;
     return dp / denom;
 }
-
 
 float ggxDistribution(float nDotH, float Roughness)
 {
@@ -594,7 +573,6 @@ float ggxDistribution(float nDotH, float Roughness)
     float ggxdistrib = alpha2 / (PI * d * d);
     return ggxdistrib;
 }
-
 
 vec3 CalcPBRLighting(BaseLight Light, vec3 PosDir, bool IsDirLight, vec3 Normal)
 {
@@ -637,10 +615,10 @@ vec3 CalcPBRLighting(BaseLight Light, vec3 PosDir, bool IsDirLight, vec3 Normal)
 
     float Roughness = GetRoughness();
 
-    vec3 SpecBRDF_nom  = ggxDistribution(nDotH, Roughness) *
-                         F *
-                         geomSmith(nDotL, Roughness) *
-                         geomSmith(nDotV, Roughness);
+    vec3 SpecBRDF_nom = ggxDistribution(nDotH, Roughness) *
+            F *
+            geomSmith(nDotL, Roughness) *
+            geomSmith(nDotV, Roughness);
 
     float SpecBRDF_denom = 4.0 * nDotV * nDotL + 0.0001;
 
@@ -653,18 +631,15 @@ vec3 CalcPBRLighting(BaseLight Light, vec3 PosDir, bool IsDirLight, vec3 Normal)
     return FinalColor;
 }
 
-
 vec3 CalcPBRDirectionalLight(vec3 Normal)
 {
     return CalcPBRLighting(gDirectionalLight.Base, gDirectionalLight.Direction, true, Normal);
 }
 
-
 vec3 CalcPBRPointLight(PointLight l, vec3 Normal)
 {
     return CalcPBRLighting(l.Base, l.LocalPos, false, Normal);
 }
-
 
 vec4 CalcTotalPBRLighting()
 {
@@ -672,7 +647,7 @@ vec4 CalcTotalPBRLighting()
 
     vec3 TotalLight = CalcPBRDirectionalLight(Normal);
 
-    for (int i = 0 ;i < gNumPointLights ;i++) {
+    for (int i = 0; i < gNumPointLights; i++) {
         TotalLight += CalcPBRPointLight(gPointLights[i], Normal);
     }
 
@@ -680,23 +655,22 @@ vec4 CalcTotalPBRLighting()
     TotalLight = TotalLight / (TotalLight + vec3(1.0));
 
     // Gamma correction
-    vec4 FinalLight = vec4(pow(TotalLight, vec3(1.0/2.2)), 1.0);
+    vec4 FinalLight = vec4(pow(TotalLight, vec3(1.0 / 2.2)), 1.0);
 
     return FinalLight;
 }
-
 
 void main()
 {
     if (gIsPBR) {
         FragColor = CalcTotalPBRLighting();
-      //  FragColor = texture(gRoughness, TexCoord0.xy);
+        //  FragColor = texture(gRoughness, TexCoord0.xy);
     } else {
         FragColor = CalcPhongLighting();
     }
 
     if (EdgeDistance0.x >= 0) {
-	    float d = min( EdgeDistance0.x, min(EdgeDistance0.y, EdgeDistance0.z ));
+        float d = min(EdgeDistance0.x, min(EdgeDistance0.y, EdgeDistance0.z));
 
         float mixVal = 0.0;
         if (d < gWireframeWidth - 1) {
@@ -706,7 +680,7 @@ void main()
         } else {
             float x = d - (gWireframeWidth - 1);
             mixVal = exp2(-2.0 * x * x);
-        }        
+        }
 
         FragColor = mix(FragColor, gWireframeColor, mixVal);
     }

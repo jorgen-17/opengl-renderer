@@ -104,14 +104,14 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\..\include;..\..\include\assimp5</AdditionalIncludeDirectories>
+	  <AdditionalIncludeDirectories>..\..\include;..\..\include\assimp5;..\..\include\GLFW;..\..\common\3rdparty\meshoptimizer\src</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp23</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>..\lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>meshoptimizer.lib;glfw3dll.lib;glew32.lib;assimp-vc143-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;meshoptimizer.lib;glfw3dll.lib;glew32.lib;assimp-vc143-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>xcopy "..\..\*.vs" /Y &amp;&amp; xcopy "..\..\*.fs" /Y &amp;&amp; xcopy "..\..\common\shaders" ".\common\shaders" /I /S /Y &amp;&amp; xcopy "..\..\content" ".\content" /I /S /Y</Command>
@@ -127,15 +127,15 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\..\include;..\..\include\assimp5</AdditionalIncludeDirectories>
+	  <ConformanceMode>true</ConformanceMode>
+	  <AdditionalIncludeDirectories>..\..\include;..\..\include\assimp5;..\..\include\GLFW;..\..\common\3rdparty\meshoptimizer\src</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp23</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>..\lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>meshoptimizer.lib;glfw3dll.lib;glew32.lib;assimp-vc143-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;meshoptimizer.lib;glfw3dll.lib;glew32.lib;assimp-vc143-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>xcopy "..\..\*.vs" /Y &amp;&amp; xcopy "..\..\*.fs" /Y &amp;&amp; xcopy "..\..\common\shaders" ".\common\shaders" /I /S /Y &amp;&amp; xcopy "..\..\content" ".\content" /I /S /Y</Command>

@@ -27,7 +27,6 @@
 
 #ifndef VULKAN
 #include <GL/glew.h>
-#include <GL/freeglut.h>
 #endif
 #include <sys/types.h>
 #include <sys/stat.h>

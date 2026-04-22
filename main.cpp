@@ -3,7 +3,6 @@
 #include <math.h>
 
 #include <GL/glew.h>
-#include <GL/freeglut.h>
 
 #include "ogldev_basic_glfw_camera.h"
 #include "ogldev_basic_mesh.h"

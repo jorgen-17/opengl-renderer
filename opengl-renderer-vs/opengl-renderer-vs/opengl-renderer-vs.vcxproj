@@ -111,7 +111,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>..\lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glew32.lib;freeglutd.lib;assimp-vc143-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>meshoptimizer.lib;glfw3dll.lib;glew32.lib;assimp-vc143-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>xcopy "..\..\*.vs" /Y &amp;&amp; xcopy "..\..\*.fs" /Y &amp;&amp; xcopy "..\..\common\shaders" ".\common\shaders" /I /S /Y &amp;&amp; xcopy "..\..\content" ".\content" /I /S /Y</Command>
@@ -135,7 +135,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>..\lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glew32.lib;freeglut.lib;assimp-vc143-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>meshoptimizer.lib;glfw3dll.lib;glew32.lib;assimp-vc143-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>xcopy "..\..\*.vs" /Y &amp;&amp; xcopy "..\..\*.fs" /Y &amp;&amp; xcopy "..\..\common\shaders" ".\common\shaders" /I /S /Y &amp;&amp; xcopy "..\..\content" ".\content" /I /S /Y</Command>
@@ -147,25 +147,33 @@
   <ItemGroup>
     <ClCompile Include="..\..\common\3rdparty\stb_image.cpp" />
     <ClCompile Include="..\..\common\camera.cpp" />
-    <ClCompile Include="..\..\common\glut_backend.cpp" />
     <ClCompile Include="..\..\common\math_3d.cpp" />
     <ClCompile Include="..\..\common\pipeline.cpp" />
     <ClCompile Include="..\..\common\technique.cpp" />
     <ClCompile Include="..\..\common\ogldev_app.cpp" />
     <ClCompile Include="..\..\common\ogldev_atb.cpp" />
+    <ClCompile Include="..\..\common\ogldev_basic_glfw_camera.cpp" />
     <ClCompile Include="..\..\common\ogldev_basic_lighting.cpp" />
+    <ClCompile Include="..\..\common\ogldev_basic_mesh.cpp" />
+    <ClCompile Include="..\..\common\ogldev_glfw.cpp " />
+    <ClCompile Include="..\..\common\ogldev_glfw_camera_handler.cpp " />
+    <ClCompile Include="..\..\common\ogldev_glm_camera.cpp " />
+    <ClCompile Include="..\..\common\ogldev_new_lighting.cpp " />
     <ClCompile Include="..\..\common\ogldev_shadow_map_fbo.cpp" />
     <ClCompile Include="..\..\common\ogldev_texture.cpp" />
     <ClCompile Include="..\..\common\ogldev_util.cpp" />
     <ClCompile Include="..\..\common\ogldev_world_transform.cpp" />
     <ClCompile Include="..\..\main.cpp" />
-    <ClCompile Include="..\..\skinned_mesh.cpp" />
-    <ClCompile Include="..\..\skinning_technique.cpp" />
+    <ClCompile Include="..\..\picking_technique.cpp" />
+    <ClCompile Include="..\..\picking_texture.cpp" />
+    <ClCompile Include="..\..\simple_color_technique.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\skinning.fs" />
-    <None Include="..\..\skinning.vs" />
-  </ItemGroup>
+    <None Include="..\..\picking.fs" />
+    <None Include="..\..\picking.vs" />
+    <None Include="..\..\simple_color.fs" />
+    <None Include="..\..\simple_color.vs" />
+   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

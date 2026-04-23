@@ -1,3 +1,6 @@
 [submodule "meshoptimizer"]
     path =  common/3rdparty/meshoptimizer
     url = https://github.com/zeux/meshoptimizer
+[submodule "glfw"]
+	path = common/3rdparty/glfw
+	url = https://github.com/glfw/glfw

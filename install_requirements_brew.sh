@@ -18,4 +18,12 @@ make
 # go back to original dir used when executed this script
 cd $current_dir
 
-# libs to include later on in the proj: libmagick++-dev vulkan-tools vulkan-validationlayers vulkan-utility-libraries-dev glslang-dev glslang-tools
+cd ./common/3rdparty/glfw/
+mkdir build && cd build
+cmake ../CMakeLists.txt
+make
+
+# go back to original dir used when executed this script
+cd $current_dir
+
+ # libs to include later on in the proj: libmagick++-dev vulkan-tools vulkan-validationlayers vulkan-utility-libraries-dev glslang-dev glslang-tools

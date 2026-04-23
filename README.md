@@ -1,8 +1,14 @@
 consolidating [olgdev](https://github.com/emeiri/ogldev) tutorials
 
+need to pull in code for submodules (i.e. meshoptimizer)
+```bash
+git submodule update --init
+```
+
 using [bear](https://github.com/rizsotto/Bear) tool to generate compile_commands.json so that clangd can find function definitions in the cpp files not just the declarations in the .h files
 ```bash
 sudo apt install bear
+# or `brew install bear` on macos
 bear -- ./build.sh
 ```
 

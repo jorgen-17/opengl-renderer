@@ -189,6 +189,7 @@ private:
         int major_ver = 0;
         int minor_ver = 0;
         window = glfw_init(major_ver, minor_ver, WINDOW_WIDTH, WINDOW_HEIGHT, fullscreen, "Tutorial 31");
+        printf("post glfw_init\n");
     }
 
     void InitCallbacks()
@@ -286,16 +287,20 @@ static void MouseButtonCallback(GLFWwindow* window, int Button, int Action, int 
 
 int main(int argc, char** argv)
 {
+    printf("made it into main\n");
     app = new Tutorial31();
 
+    printf("new app\n");
     app->Init();
 
+    printf("app init\n");
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
     glFrontFace(GL_CW);
     glCullFace(GL_BACK);
     glEnable(GL_CULL_FACE);
     glEnable(GL_DEPTH_TEST);
 
+    printf("gl methods\n");
     app->Run();
 
     delete app;

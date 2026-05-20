@@ -1,5 +1,6 @@
 /*
-        Copyright 2011 Etay Meiri
+
+        Copyright 2022 Etay Meiri
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -15,24 +16,25 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "simple_color_technique.h"
-#include "ogldev_util.h"
+#include "ogldev_shadow_mapping_technique.h"
 
-SimpleColorTechnique::SimpleColorTechnique()
+ShadowMappingTechnique::ShadowMappingTechnique()
 {
+
 }
 
-bool SimpleColorTechnique::Init()
+
+bool ShadowMappingTechnique::Init()
 {
     if (!Technique::Init()) {
         return false;
     }
 
-    if (!AddShader(GL_VERTEX_SHADER, "simple_color.vs")) {
+    if (!AddShader(GL_VERTEX_SHADER, "./common/shaders/shadow_map.vs")) {
         return false;
     }
 
-    if (!AddShader(GL_FRAGMENT_SHADER, "simple_color.fs")) {
+    if (!AddShader(GL_FRAGMENT_SHADER, "./common/shaders/empty.fs")) {
         return false;
     }
 
@@ -40,16 +42,14 @@ bool SimpleColorTechnique::Init()
         return false;
     }
 
-    m_WVPLocation = GetUniformLocation("gWVP");
-
-    if (m_WVPLocation == INVALID_UNIFORM_LOCATION) {
-        return false;
-    }
+    GET_UNIFORM_AND_CHECK(m_WVPLoc, "gWVP");
 
     return true;
 }
 
-void SimpleColorTechnique::SetWVP(const Matrix4f& WVP)
+
+
+void ShadowMappingTechnique::SetWVP(const Matrix4f& WVP)
 {
-    glUniformMatrix4fv(m_WVPLocation, 1, GL_TRUE, (const GLfloat*)WVP.m);
+    glUniformMatrix4fv(m_WVPLoc, 1, GL_TRUE, (const GLfloat*)WVP.m);
 }

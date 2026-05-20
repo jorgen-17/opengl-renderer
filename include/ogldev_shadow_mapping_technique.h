@@ -1,5 +1,6 @@
 /*
-        Copyright 2011 Etay Meiri
+
+        Copyright 2022 Etay Meiri
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -15,33 +16,27 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef PICKING_TECHNIQUE_H
-#define PICKING_TECHNIQUE_H
+#ifndef SHADOW_MAPPING_TECHNIQUE_H
+#define SHADOW_MAPPING_TECHNIQUE_H
 
 #include "technique.h"
 #include "ogldev_math_3d.h"
-#include "ogldev_mesh_common.h"
-#include "ogldev_types.h"
 
-class PickingTechnique : public Technique, public IRenderCallbacks
+
+class ShadowMappingTechnique : public Technique
 {
-public:
+ public:
 
-    PickingTechnique();
+    ShadowMappingTechnique();
 
     virtual bool Init();
 
     void SetWVP(const Matrix4f& WVP);
 
-    void SetObjectIndex(uint ObjectIndex);
+ private:
 
-    void DrawStartCB(uint DrawIndex);
-
-private:
-
-    GLuint m_WVPLocation;
-    GLuint m_drawIndexLocation;
-    GLuint m_objectIndexLocation;
+    GLuint m_WVPLoc = INVALID_UNIFORM_LOCATION;
 };
 
-#endif  /* PICKING_TECHNIQUE_H */
+
+#endif

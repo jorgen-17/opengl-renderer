@@ -155,25 +155,18 @@
     <ClCompile Include="..\..\common\ogldev_basic_glfw_camera.cpp" />
     <ClCompile Include="..\..\common\ogldev_basic_lighting.cpp" />
     <ClCompile Include="..\..\common\ogldev_basic_mesh.cpp" />
+    <ClCompile Include="..\..\common\ogldev_framebuffer.cpp " />
     <ClCompile Include="..\..\common\ogldev_glfw.cpp " />
     <ClCompile Include="..\..\common\ogldev_glfw_camera_handler.cpp " />
     <ClCompile Include="..\..\common\ogldev_glm_camera.cpp " />
     <ClCompile Include="..\..\common\ogldev_new_lighting.cpp " />
     <ClCompile Include="..\..\common\ogldev_shadow_map_fbo.cpp" />
+    <ClCompile Include="..\..\common\ogldev_shadow_mapping_technique.cpp" />
     <ClCompile Include="..\..\common\ogldev_texture.cpp" />
     <ClCompile Include="..\..\common\ogldev_util.cpp" />
     <ClCompile Include="..\..\common\ogldev_world_transform.cpp" />
     <ClCompile Include="..\..\main.cpp" />
-    <ClCompile Include="..\..\picking_technique.cpp" />
-    <ClCompile Include="..\..\picking_texture.cpp" />
-    <ClCompile Include="..\..\simple_color_technique.cpp" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\picking.fs" />
-    <None Include="..\..\picking.vs" />
-    <None Include="..\..\simple_color.fs" />
-    <None Include="..\..\simple_color.vs" />
-   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

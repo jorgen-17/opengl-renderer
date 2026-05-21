@@ -5,11 +5,10 @@
 #include <GL/glew.h>
 
 #include "ogldev_basic_glfw_camera.h"
+#include "ogldev_basic_lighting.h"
 #include "ogldev_basic_mesh.h"
-#include "ogldev_engine_common.h"
 #include "ogldev_glfw.h"
 #include "ogldev_math_3d.h"
-#include "ogldev_new_lighting.h"
 #include "picking_technique.h"
 #include "picking_texture.h"
 #include "simple_color_technique.h"
@@ -31,7 +30,6 @@ public:
         m_directionalLight.Color = Vector3f(1.0f, 1.0f, 1.0f);
         m_directionalLight.AmbientIntensity = 3.0f;
         m_directionalLight.DiffuseIntensity = 3.0f;
-        m_directionalLight.WorldDirection = Vector3f(-1.0f, 0.0, 0.0);
 
         // The same mesh will be rendered at the following locations
         m_worldPos[0] = Vector3f(-10.0f, 0.0f, 5.0f);
@@ -51,9 +49,11 @@ public:
 
         InitCallbacks();
 
-        InitCamera();
-
+        // on MacOS you need to load VAO before compiling the shader otherwise you get:
+        // `Validation Failed: No vertex array object bound`
         InitMesh();
+
+        InitCamera();
 
         InitShaders();
     }
@@ -139,9 +139,6 @@ public:
             Matrix4f World = worldTransform.GetMatrix();
             Matrix4f WVP = Projection * View * World;
             m_lightingEffect.SetWVP(WVP);
-            Vector3f CameraLocalPos3f = worldTransform.WorldPosToLocalPos(m_pGameCamera->GetPos());
-            m_lightingEffect.SetCameraLocalPos(CameraLocalPos3f);
-            m_directionalLight.CalcLocalDirection(worldTransform);
             m_lightingEffect.SetDirectionalLight(m_directionalLight);
 
             if (i == clicked_object_id) {
@@ -186,8 +183,14 @@ private:
 
     void CreateWindow()
     {
+#ifdef __APPLE__
+        // MacOS is capped at opengl 4.1
+        int major_ver = 4;
+        int minor_ver = 1;
+#else
         int major_ver = 0;
         int minor_ver = 0;
+#endif
         window = glfw_init(major_ver, minor_ver, WINDOW_WIDTH, WINDOW_HEIGHT, fullscreen, "Tutorial 31");
         printf("post glfw_init\n");
     }
@@ -220,10 +223,8 @@ private:
 
     void InitShaders()
     {
+        printf("InitShaders\n");
         m_lightingEffect.Enable();
-        m_lightingEffect.SetTextureUnit(COLOR_TEXTURE_UNIT_INDEX);
-        m_lightingEffect.SetSpecularExponentTextureUnit(SPECULAR_EXPONENT_UNIT_INDEX);
-        m_lightingEffect.SetMaterial(pMesh->GetMaterial());
 
         m_pickingTexture.Init(WINDOW_WIDTH, WINDOW_HEIGHT);
 
@@ -248,7 +249,7 @@ private:
     }
 
     GLFWwindow* window = NULL;
-    LightingTechnique m_lightingEffect;
+    BasicLightingTechnique m_lightingEffect;
     PickingTechnique m_pickingEffect;
     SimpleColorTechnique m_simpleColorEffect;
     BasicCamera* m_pGameCamera = NULL;

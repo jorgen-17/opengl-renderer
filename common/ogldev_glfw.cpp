@@ -131,7 +131,16 @@ GLFWwindow* glfw_init(int major_ver, int minor_ver, int width, int height, bool 
     // Must be done after glfw is initialized!
     init_glew();
 
+#ifdef __APPLE__
+    // needed so that MacOS can compile glsl version 330-410
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+#else
+    // enabling Unsupported Feature on macOS:
+    // Modern macOS only supports OpenGL up to version 4.1 in "Core Profile" mode.
+    // The glDebugMessageCallback function was introduced in OpenGL 4.3.
     enable_debug_output();
+#endif
 
     glfwSwapInterval(1);
 

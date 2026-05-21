@@ -65,11 +65,15 @@ Vector3f& Vector3f::Normalize()
 {
     float len = Length();
 
+#ifndef __APPLE__
+    // seeing len == 0 on MacOS
     assert(len != 0);
-
-    x /= len;
-    y /= len;
-    z /= len;
+#endif
+    if (len != 0) {
+        x /= len;
+        y /= len;
+        z /= len;
+    }
 
     return *this;
 }

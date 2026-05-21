@@ -14,7 +14,7 @@ case "$OS" in
         ;;
     Darwin)
         echo "Running on macOS"
-        ADD_LD_FLAGS="-L/opt/homebrew/lib -lglew -lassimp ./common/3rdparty/glfw/build/src/libglfw3.a ./common/3rdparty/meshoptimizer/build/libmeshoptimizer.a -framework Cocoa -framework OpenGL -framework IOKit -framework QuartzCore"
+        ADD_LD_FLAGS="-L/opt/homebrew/lib -lglew -lassimp -lglfw ./common/3rdparty/meshoptimizer/build/libmeshoptimizer.a -framework Cocoa -framework OpenGL -framework IOKit -framework QuartzCore"
         ;;
     *)
         echo "Unknown OS: $OS"

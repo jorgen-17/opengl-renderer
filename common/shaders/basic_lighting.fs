@@ -89,11 +89,13 @@ vec4 CalcPointLight(PointLight l, vec3 Normal)
     LightDirection = normalize(LightDirection);
 
     vec4 Color = CalcLightInternal(l.Base, LightDirection, Normal);
-    float Attenuation =  l.Atten.Constant +
+    // using _ bc of compilation failure on MacOS.
+    // I guess it doesnt like that the struct above has the same name
+    float _Attenuation =  l.Atten.Constant +
                          l.Atten.Linear * Distance +
                          l.Atten.Exp * Distance * Distance;
 
-    return Color / Attenuation;
+    return Color / _Attenuation;
 }
 
 vec4 CalcSpotLight(SpotLight l, vec3 Normal)

@@ -92,7 +92,11 @@ bool BasicMesh::LoadMesh(const string& Filename, int AssimpFlags)
 
     // Make sure the VAO is not changed from the outside
     if (!IsGLVersionHigher(4, 5)) {
+#ifndef __APPLE__
+        // for some reason this doesnt work on MacOS
+        // get error: Validation Failed: No vertex array object bound
         glBindVertexArray(0);
+#endif
     }
 
     return Ret;

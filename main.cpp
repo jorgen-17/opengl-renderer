@@ -7,45 +7,59 @@
 #include "ogldev_basic_glfw_camera.h"
 #include "ogldev_basic_lighting.h"
 #include "ogldev_basic_mesh.h"
+#include "ogldev_engine_common.h"
+#include "ogldev_framebuffer.h"
 #include "ogldev_glfw.h"
 #include "ogldev_math_3d.h"
-#include "picking_technique.h"
-#include "picking_texture.h"
-#include "simple_color_technique.h"
+#include "ogldev_new_lighting.h"
+#include "ogldev_shadow_mapping_technique.h"
 
 #define WINDOW_WIDTH 2560
 #define WINDOW_HEIGHT 1600
+#define SHADOW_MAP_WIDTH 2048
+#define SHADOW_MAP_HEIGHT 2048
+
 const bool fullscreen = true;
 
 static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 static void CursorPosCallback(GLFWwindow* window, double x, double y);
 static void MouseButtonCallback(GLFWwindow* window, int Button, int Action, int Mode);
 
-class Tutorial31
+class Tutorial35
 {
 public:
 
-    Tutorial31()
+    Tutorial35()
     {
-        m_directionalLight.Color = Vector3f(1.0f, 1.0f, 1.0f);
-        m_directionalLight.AmbientIntensity = 3.0f;
-        m_directionalLight.DiffuseIntensity = 3.0f;
+        m_spotLight.WorldPosition  = Vector3f(-20.0, 20.0, 0.0f);
+        m_spotLight.WorldDirection = Vector3f(1.0f, -1.0f, 0.0f);
+        m_spotLight.DiffuseIntensity = 0.9f;
+        m_spotLight.AmbientIntensity = 0.2f;
+        m_spotLight.Color = Vector3f(1.0f, 1.0f, 1.0f);
+        m_spotLight.Attenuation.Linear = 0.00f;
+        m_spotLight.Attenuation.Exp = 0.0f;
+        m_spotLight.Cutoff = 30.0f;
 
-        // The same mesh will be rendered at the following locations
-        m_worldPos[0] = Vector3f(-10.0f, 0.0f, 5.0f);
-        m_worldPos[1] = Vector3f(10.0f, 0.0f, 5.0f);
-        m_worldPos[2] = Vector3f(0.0f, 2.0f, 20.0f);
+        // Initialize a perspective projection matrix for the spot light
+        float FOV = 45.0f;
+        float zNear = 1.0f;
+        float zFar = 50.0f;
+        PersProjInfo shadowPersProjInfo = { FOV, SHADOW_MAP_WIDTH, SHADOW_MAP_HEIGHT, zNear, zFar };
+        m_lightPersProjMatrix.InitPersProjTransform(shadowPersProjInfo);
     }
 
-    virtual ~Tutorial31()
+    virtual ~Tutorial35()
     {
         SAFE_DELETE(m_pGameCamera);
-        SAFE_DELETE(pMesh);
+        SAFE_DELETE(m_pMesh1);
+        SAFE_DELETE(m_pTerrain);
     }
 
     void Init()
     {
         CreateWindow();
+
+        CreateShadowMap();
 
         InitCallbacks();
 
@@ -69,99 +83,152 @@ public:
 
     void RenderSceneCB()
     {
+        ShadowMapPass();
+        LightingPass();
+    }
+
+    void ShadowMapPass()
+    {
+        m_shadowMapFBO.BindForWriting();
+
+        glClear(GL_DEPTH_BUFFER_BIT);
+
+        m_shadowMapTech.Enable();
+
+        Matrix4f World = m_pMesh1->GetWorldMatrix();
+
+        Matrix4f LightView;
+        Vector3f Up(0.0f, 1.0f, 0.0f);
+        LightView.InitCameraTransform(m_spotLight.WorldPosition, m_spotLight.WorldDirection, Up);
+
+        Matrix4f WVP = m_lightPersProjMatrix * LightView * World;
+        m_shadowMapTech.SetWVP(WVP);
+
+        m_pMesh1->Render();
+    }
+
+    void LightingPass()
+    {
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+        glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        m_lightingTech.Enable();
+
+        m_shadowMapFBO.BindDepthForReading(SHADOW_TEXTURE_UNIT);
+
         m_pGameCamera->OnRender();
 
-        // There's no point in the picking phase when the mouse is not pressed
-        if (m_leftMouseButton.IsPressed) {
-            PickingPhase();
+        static float foo = 0.0f;
+        foo += 0.002f;
+
+        m_spotLight.WorldPosition = Vector3f(-sinf(foo) * 15.0f, 8.0f, -cosf(foo) * 15.0f);
+        m_spotLight.WorldDirection = m_pMesh1->GetPosition() - m_spotLight.WorldPosition;
+
+        if (m_cameraOnLight) {
+            m_pGameCamera->SetPosition(m_spotLight.WorldPosition);
+            m_pGameCamera->SetTarget(m_spotLight.WorldDirection);
         }
 
-        RenderPhase();
+        ///////////////////////////
+        // Render the main object
+        ////////////////////////////
+
+        // Set the WVP matrix from the camera point of view
+        Matrix4f World = m_pMesh1->GetWorldMatrix();
+        Matrix4f CameraView = m_pGameCamera->GetMatrix();
+        Matrix4f CameraProjection = m_pGameCamera->GetProjectionMat();
+        Matrix4f WVP = CameraProjection * CameraView * World;
+        m_lightingTech.SetWVP(WVP);
+
+        // Set the WVP matrix from the light point of view
+        Matrix4f LightView;
+        Vector3f Up(0.0f, 1.0f, 0.0f);
+        LightView.InitCameraTransform(m_spotLight.WorldPosition, m_spotLight.WorldDirection, Up);
+        Matrix4f LightWVP = m_lightPersProjMatrix * LightView * World;
+        m_lightingTech.SetLightWVP(LightWVP);
+
+        Vector3f CameraLocalPos3f = m_pMesh1->GetWorldTransform().WorldPosToLocalPos(m_pGameCamera->GetPos());
+        m_lightingTech.SetCameraLocalPos(CameraLocalPos3f);
+
+        m_spotLight.CalcLocalDirectionAndPosition(m_pMesh1->GetWorldTransform());
+
+        m_lightingTech.SetSpotLights(1, &m_spotLight);
+
+        m_lightingTech.SetMaterial(m_pMesh1->GetMaterial());
+
+        m_pMesh1->Render();
+
+        /////////////////////////
+        // Render the terrain
+        ////////////////////////
+
+        // Set the WVP matrix from the camera point of view
+        World = m_pTerrain->GetWorldMatrix();
+        WVP = CameraProjection * CameraView * World;
+        m_lightingTech.SetWVP(WVP);
+
+        // Set the WVP matrix from the light point of view
+        LightWVP = m_lightPersProjMatrix * LightView * World;
+        m_lightingTech.SetLightWVP(LightWVP);
+
+        // Update the shader with the local space pos/dir of the spot light
+        m_spotLight.CalcLocalDirectionAndPosition(m_pTerrain->GetWorldTransform());
+        m_lightingTech.SetSpotLights(1, &m_spotLight);
+        m_lightingTech.SetMaterial(m_pTerrain->GetMaterial());
+
+        // Update the shader with the local space pos of the camera
+        CameraLocalPos3f = m_pTerrain->GetWorldTransform().WorldPosToLocalPos(m_pGameCamera->GetPos());
+        m_lightingTech.SetCameraLocalPos(CameraLocalPos3f);
+
+        m_pTerrain->Render();
     }
 
-    void PickingPhase()
-    {
-        m_pickingTexture.EnableWriting();
+#define ATTEN_STEP 0.01f
 
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+#define ANGLE_STEP 1.0f
 
-        m_pickingEffect.Enable();
-
-        WorldTrans& worldTransform = pMesh->GetWorldTransform();
-        Matrix4f View = m_pGameCamera->GetMatrix();
-        Matrix4f Projection = m_pGameCamera->GetProjectionMat();
-
-        for (uint i = 0 ; i < (int)ARRAY_SIZE_IN_ELEMENTS(m_worldPos) ; i++) {
-            worldTransform.SetPosition(m_worldPos[i]);
-            // Background is zero, the real objects start at 1
-            m_pickingEffect.SetObjectIndex(i + 1);
-            Matrix4f World = worldTransform.GetMatrix();
-            Matrix4f WVP = Projection * View * World;
-            m_pickingEffect.SetWVP(WVP);
-            pMesh->Render(&m_pickingEffect);
-        }
-
-        m_pickingTexture.DisableWriting();
-    }
-
-    void RenderPhase()
-    {
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        WorldTrans& worldTransform = pMesh->GetWorldTransform();
-        Matrix4f View = m_pGameCamera->GetMatrix();
-        Matrix4f Projection = m_pGameCamera->GetProjectionMat();
-
-        // If the left mouse button is clicked check if it hit a triangle
-        // and color it red
-        int clicked_object_id = -1;
-        if (m_leftMouseButton.IsPressed) {
-            PickingTexture::PixelInfo Pixel = m_pickingTexture.ReadPixel(m_leftMouseButton.x, WINDOW_HEIGHT - m_leftMouseButton.y - 1);
-
-            if (Pixel.ObjectID != 0) {
-                // Compensate for the SetObjectindex call in the picking phase
-                clicked_object_id = Pixel.ObjectID - 1;
-                assert(clicked_object_id < ARRAY_SIZE_IN_ELEMENTS(m_worldPos));
-                m_simpleColorEffect.Enable();
-                worldTransform.SetPosition(m_worldPos[clicked_object_id]);
-                Matrix4f World = worldTransform.GetMatrix();
-                Matrix4f WVP = Projection * View * World;
-                m_simpleColorEffect.SetWVP(WVP);
-                pMesh->Render(Pixel.DrawID, Pixel.PrimID);
-            }
-        }
-
-        // render the objects as usual
-        m_lightingEffect.Enable();
-
-        for (unsigned int i = 0 ; i < ARRAY_SIZE_IN_ELEMENTS(m_worldPos) ; i++) {
-            worldTransform.SetPosition(m_worldPos[i]);
-            Matrix4f World = worldTransform.GetMatrix();
-            Matrix4f WVP = Projection * View * World;
-            m_lightingEffect.SetWVP(WVP);
-            m_lightingEffect.SetDirectionalLight(m_directionalLight);
-
-            if (i == clicked_object_id) {
-                 m_lightingEffect.SetColorMod(Vector4f(0.0f, 1.0, 0.0, 1.0f));
-            } else {
-                 m_lightingEffect.SetColorMod(Vector4f(1.0f, 1.0, 1.0, 1.0f));
-            }
-
-            pMesh->Render(NULL);
-        }
-    }
 
     void KeyboardCB(uint key, int state)
     {
-        switch (key) {
-        case GLFW_KEY_ESCAPE:
-        case GLFW_KEY_Q:
-            glfwDestroyWindow(window);
-            glfwTerminate();
-            exit(0);
-            break;
-        default:
-            m_pGameCamera->OnKeyboard(key);
+        if (state == GLFW_PRESS) {
+            switch (key) {
+            case GLFW_KEY_ESCAPE:
+            case GLFW_KEY_Q:
+                glfwDestroyWindow(window);
+                glfwTerminate();
+                exit(0);
+
+            case GLFW_KEY_L:
+                m_cameraOnLight = !m_cameraOnLight;
+                if (!m_cameraOnLight) {
+                    m_pGameCamera->SetPosition(m_cameraPos);
+                    m_pGameCamera->SetTarget(m_cameraTarget);
+                }
+                break;
+
+            case GLFW_KEY_A:
+                m_spotLight.Attenuation.Linear += ATTEN_STEP;
+                m_spotLight.Attenuation.Linear += ATTEN_STEP;
+                break;
+
+            case GLFW_KEY_Z:
+                m_spotLight.Attenuation.Linear -= ATTEN_STEP;
+                m_spotLight.Attenuation.Linear -= ATTEN_STEP;
+                break;
+
+            case GLFW_KEY_S:
+                m_spotLight.Attenuation.Exp += ATTEN_STEP;
+                m_spotLight.Attenuation.Exp += ATTEN_STEP;
+                break;
+
+            case GLFW_KEY_X:
+                m_spotLight.Attenuation.Exp -= ATTEN_STEP;
+                m_spotLight.Attenuation.Exp -= ATTEN_STEP;
+                break;
+            }
         }
     }
 
@@ -172,11 +239,6 @@ public:
 
     void MouseCB(int button, int action, int x, int y)
     {
-        if (button == GLFW_MOUSE_BUTTON_LEFT) {
-            m_leftMouseButton.IsPressed = (action == GLFW_PRESS);
-            m_leftMouseButton.x = x;
-            m_leftMouseButton.y = y;
-        }
     }
 
 private:
@@ -190,9 +252,14 @@ private:
 #else
         int major_ver = 0;
         int minor_ver = 0;
-#endif
-        window = glfw_init(major_ver, minor_ver, WINDOW_WIDTH, WINDOW_HEIGHT, fullscreen, "Tutorial 31");
-        printf("post glfw_init\n");
+        window = glfw_init(major_ver, minor_ver, WINDOW_WIDTH, WINDOW_HEIGHT, fullscreen, "Tutorial 35");
+
+        glfwSetCursorPos(window, WINDOW_WIDTH / 2.0, WINDOW_HEIGHT / 2.0);
+    }
+
+    void CreateShadowMap()
+    {
+        m_shadowMapFBO.Init(SHADOW_MAP_WIDTH, SHADOW_MAP_HEIGHT, 0, false, true, false);
     }
 
     void InitCallbacks()
@@ -204,68 +271,63 @@ private:
 
     void InitCamera()
     {
-        Vector3f Pos(0.0f, 5.0f, -22.0f);
-        Vector3f Target(0.0f, -0.2f, 1.0f);
+        m_cameraPos = Vector3f(3.0f, 3.0f, -15.0f);
+        m_cameraTarget = Vector3f(-0.2f, -0.2f, 1.0f);
         Vector3f Up(0.0, 1.0f, 0.0f);
 
         float FOV = 45.0f;
-        float zNear = 0.1f;
+        float zNear = 1.0f;
         float zFar = 100.0f;
         PersProjInfo persProjInfo = { FOV, (float)WINDOW_WIDTH, (float)WINDOW_HEIGHT, zNear, zFar };
 
-        m_pGameCamera = new BasicCamera(persProjInfo, Pos, Target, Up);
-
-        if (!m_lightingEffect.Init()) {
-            printf("Error initializing the lighting technique\n");
-            exit(1);
-        }
+        m_pGameCamera = new BasicCamera(persProjInfo, m_cameraPos, m_cameraTarget, Up);
     }
 
     void InitShaders()
     {
-        printf("InitShaders\n");
-        m_lightingEffect.Enable();
-
-        m_pickingTexture.Init(WINDOW_WIDTH, WINDOW_HEIGHT);
-
-        if (!m_pickingEffect.Init()) {
+        if (!m_lightingTech.Init()) {
+            printf("Error initializing the lighting technique\n");
             exit(1);
         }
 
-        if (!m_simpleColorEffect.Init()) {
+        m_lightingTech.Enable();
+        m_lightingTech.SetTextureUnit(COLOR_TEXTURE_UNIT_INDEX);
+        m_lightingTech.SetShadowMapTextureUnit(SHADOW_TEXTURE_UNIT_INDEX);
+        //    m_lightingTech.SetSpecularExponentTextureUnit(SPECULAR_EXPONENT_UNIT_INDEX);
+
+        if (!m_shadowMapTech.Init()) {
+            printf("Error initializing the shadow mapping technique\n");
             exit(1);
         }
     }
 
     void InitMesh()
     {
-        pMesh = new BasicMesh();
+        m_pMesh1 = new BasicMesh();
 
-        pMesh->LoadMesh("./content/spider.obj");
+        m_pMesh1->LoadMesh("./content/ordinary_house/ordinary_house.obj");
 
-        WorldTrans& worldTransform = pMesh->GetWorldTransform();
-        worldTransform.SetScale(0.1f);
-        worldTransform.SetRotation(0.0f, 90.0f, 0.0f);
+        m_pTerrain = new BasicMesh();
+        m_pTerrain->LoadMesh("./content/box_terrain.obj");
+        m_pTerrain->SetPosition(0.0f, 0.0f, 0.0f);
     }
 
     GLFWwindow* window = NULL;
-    BasicLightingTechnique m_lightingEffect;
-    PickingTechnique m_pickingEffect;
-    SimpleColorTechnique m_simpleColorEffect;
+    LightingTechnique m_lightingTech;
+    ShadowMappingTechnique m_shadowMapTech;
     BasicCamera* m_pGameCamera = NULL;
-    DirectionalLight m_directionalLight;
-    BasicMesh* pMesh = NULL;
-    PickingTexture m_pickingTexture;
-    struct {
-        bool IsPressed = false;
-        int x;
-        int y;
-    } m_leftMouseButton;
-    Vector3f m_worldPos[3];
+    BasicMesh* m_pMesh1 = NULL;
+    BasicMesh* m_pTerrain = NULL;
     PersProjInfo persProjInfo;
+    Matrix4f m_lightPersProjMatrix;
+    SpotLight m_spotLight;
+    Framebuffer m_shadowMapFBO;
+    Vector3f m_cameraPos;
+    Vector3f m_cameraTarget;
+    bool m_cameraOnLight = false;
 };
 
-Tutorial31* app = NULL;
+Tutorial35* app = NULL;
 
 static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
@@ -288,8 +350,7 @@ static void MouseButtonCallback(GLFWwindow* window, int Button, int Action, int 
 
 int main(int argc, char** argv)
 {
-    printf("made it into main\n");
-    app = new Tutorial31();
+    app = new Tutorial35();
 
     printf("new app\n");
     app->Init();

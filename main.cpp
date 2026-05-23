@@ -11,7 +11,7 @@
 #include "ogldev_framebuffer.h"
 #include "ogldev_glfw.h"
 #include "ogldev_math_3d.h"
-#include "ogldev_new_lighting.h"
+// #include "ogldev_new_lighting.h"
 #include "ogldev_shadow_mapping_technique.h"
 
 #define WINDOW_WIDTH 2560
@@ -31,8 +31,10 @@ public:
 
     Tutorial35()
     {
-        m_spotLight.WorldPosition  = Vector3f(-20.0, 20.0, 0.0f);
-        m_spotLight.WorldDirection = Vector3f(1.0f, -1.0f, 0.0f);
+        // m_spotLight.WorldPosition  = Vector3f(-20.0, 20.0, 0.0f);
+        // m_spotLight.WorldDirection = Vector3f(1.0f, -1.0f, 0.0f);
+        m_spotLight.Position  = Vector3f(-20.0, 20.0, 0.0f);
+        m_spotLight.Direction = Vector3f(1.0f, -1.0f, 0.0f);
         m_spotLight.DiffuseIntensity = 0.9f;
         m_spotLight.AmbientIntensity = 0.2f;
         m_spotLight.Color = Vector3f(1.0f, 1.0f, 1.0f);
@@ -89,27 +91,28 @@ public:
 
     void ShadowMapPass()
     {
-        m_shadowMapFBO.BindForWriting();
-
-        glClear(GL_DEPTH_BUFFER_BIT);
-
-        m_shadowMapTech.Enable();
-
-        Matrix4f World = m_pMesh1->GetWorldMatrix();
-
-        Matrix4f LightView;
-        Vector3f Up(0.0f, 1.0f, 0.0f);
-        LightView.InitCameraTransform(m_spotLight.WorldPosition, m_spotLight.WorldDirection, Up);
-
-        Matrix4f WVP = m_lightPersProjMatrix * LightView * World;
-        m_shadowMapTech.SetWVP(WVP);
-
-        m_pMesh1->Render();
+        // m_shadowMapFBO.BindForWriting();
+        //
+        // glClear(GL_DEPTH_BUFFER_BIT);
+        //
+        // m_shadowMapTech.Enable();
+        //
+        // Matrix4f World = m_pMesh1->GetWorldMatrix();
+        //
+        // Matrix4f LightView;
+        // Vector3f Up(0.0f, 1.0f, 0.0f);
+        // // LightView.InitCameraTransform(m_spotLight.WorldPosition, m_spotLight.WorldDirection, Up);
+        // LightView.InitCameraTransform(m_spotLight.Position, m_spotLight.Direction, Up);
+        //
+        // Matrix4f WVP = m_lightPersProjMatrix * LightView * World;
+        // m_shadowMapTech.SetWVP(WVP);
+        //
+        // m_pMesh1->Render();
     }
 
     void LightingPass()
     {
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        // glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
         glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
 
@@ -117,19 +120,24 @@ public:
 
         m_lightingTech.Enable();
 
-        m_shadowMapFBO.BindDepthForReading(SHADOW_TEXTURE_UNIT);
+        // m_shadowMapFBO.BindDepthForReading(SHADOW_TEXTURE_UNIT);
 
         m_pGameCamera->OnRender();
 
         static float foo = 0.0f;
         foo += 0.002f;
 
-        m_spotLight.WorldPosition = Vector3f(-sinf(foo) * 15.0f, 8.0f, -cosf(foo) * 15.0f);
-        m_spotLight.WorldDirection = m_pMesh1->GetPosition() - m_spotLight.WorldPosition;
+        // m_spotLight.WorldPosition = Vector3f(-sinf(foo) * 15.0f, 8.0f, -cosf(foo) * 15.0f);
+        // m_spotLight.WorldDirection = m_pMesh1->GetPosition() - m_spotLight.WorldPosition;
+        m_spotLight.Position = Vector3f(-sinf(foo) * 15.0f, 8.0f, -cosf(foo) * 15.0f);
+        m_spotLight.Direction = m_pMesh1->GetPosition() - m_spotLight.Position;
+
 
         if (m_cameraOnLight) {
-            m_pGameCamera->SetPosition(m_spotLight.WorldPosition);
-            m_pGameCamera->SetTarget(m_spotLight.WorldDirection);
+            // m_pGameCamera->SetPosition(m_spotLight.WorldPosition);
+            // m_pGameCamera->SetTarget(m_spotLight.WorldDirection);
+            m_pGameCamera->SetPosition(m_spotLight.Position);
+            m_pGameCamera->SetTarget(m_spotLight.Direction);
         }
 
         ///////////////////////////
@@ -144,20 +152,20 @@ public:
         m_lightingTech.SetWVP(WVP);
 
         // Set the WVP matrix from the light point of view
-        Matrix4f LightView;
-        Vector3f Up(0.0f, 1.0f, 0.0f);
-        LightView.InitCameraTransform(m_spotLight.WorldPosition, m_spotLight.WorldDirection, Up);
-        Matrix4f LightWVP = m_lightPersProjMatrix * LightView * World;
-        m_lightingTech.SetLightWVP(LightWVP);
-
-        Vector3f CameraLocalPos3f = m_pMesh1->GetWorldTransform().WorldPosToLocalPos(m_pGameCamera->GetPos());
-        m_lightingTech.SetCameraLocalPos(CameraLocalPos3f);
-
-        m_spotLight.CalcLocalDirectionAndPosition(m_pMesh1->GetWorldTransform());
+        // Matrix4f LightView;
+        // Vector3f Up(0.0f, 1.0f, 0.0f);
+        // LightView.InitCameraTransform(m_spotLight.WorldPosition, m_spotLight.WorldDirection, Up);
+        // Matrix4f LightWVP = m_lightPersProjMatrix * LightView * World;
+        // m_lightingTech.SetLightWVP(LightWVP);
+        //
+        // Vector3f CameraLocalPos3f = m_pMesh1->GetWorldTransform().WorldPosToLocalPos(m_pGameCamera->GetPos());
+        // m_lightingTech.SetCameraLocalPos(CameraLocalPos3f);
+        //
+        // m_spotLight.CalcLocalDirectionAndPosition(m_pMesh1->GetWorldTransform());
 
         m_lightingTech.SetSpotLights(1, &m_spotLight);
 
-        m_lightingTech.SetMaterial(m_pMesh1->GetMaterial());
+        // m_lightingTech.SetMaterial(m_pMesh1->GetMaterial());
 
         m_pMesh1->Render();
 
@@ -171,17 +179,17 @@ public:
         m_lightingTech.SetWVP(WVP);
 
         // Set the WVP matrix from the light point of view
-        LightWVP = m_lightPersProjMatrix * LightView * World;
-        m_lightingTech.SetLightWVP(LightWVP);
+        // LightWVP = m_lightPersProjMatrix * LightView * World;
+        // m_lightingTech.SetLightWVP(LightWVP);
 
         // Update the shader with the local space pos/dir of the spot light
-        m_spotLight.CalcLocalDirectionAndPosition(m_pTerrain->GetWorldTransform());
-        m_lightingTech.SetSpotLights(1, &m_spotLight);
-        m_lightingTech.SetMaterial(m_pTerrain->GetMaterial());
+        // m_spotLight.CalcLocalDirectionAndPosition(m_pTerrain->GetWorldTransform());
+        // m_lightingTech.SetSpotLights(1, &m_spotLight);
+        // m_lightingTech.SetMaterial(m_pTerrain->GetMaterial());
 
         // Update the shader with the local space pos of the camera
-        CameraLocalPos3f = m_pTerrain->GetWorldTransform().WorldPosToLocalPos(m_pGameCamera->GetPos());
-        m_lightingTech.SetCameraLocalPos(CameraLocalPos3f);
+        // CameraLocalPos3f = m_pTerrain->GetWorldTransform().WorldPosToLocalPos(m_pGameCamera->GetPos());
+        // m_lightingTech.SetCameraLocalPos(CameraLocalPos3f);
 
         m_pTerrain->Render();
     }
@@ -252,14 +260,14 @@ private:
 #else
         int major_ver = 0;
         int minor_ver = 0;
+#endif
         window = glfw_init(major_ver, minor_ver, WINDOW_WIDTH, WINDOW_HEIGHT, fullscreen, "Tutorial 35");
-
         glfwSetCursorPos(window, WINDOW_WIDTH / 2.0, WINDOW_HEIGHT / 2.0);
     }
 
     void CreateShadowMap()
     {
-        m_shadowMapFBO.Init(SHADOW_MAP_WIDTH, SHADOW_MAP_HEIGHT, 0, false, true, false);
+        // m_shadowMapFBO.Init(SHADOW_MAP_WIDTH, SHADOW_MAP_HEIGHT, 0, false, true, false);
     }
 
     void InitCallbacks()
@@ -291,14 +299,14 @@ private:
         }
 
         m_lightingTech.Enable();
-        m_lightingTech.SetTextureUnit(COLOR_TEXTURE_UNIT_INDEX);
-        m_lightingTech.SetShadowMapTextureUnit(SHADOW_TEXTURE_UNIT_INDEX);
+        // m_lightingTech.SetTextureUnit(COLOR_TEXTURE_UNIT_INDEX);
+        // m_lightingTech.SetShadowMapTextureUnit(SHADOW_TEXTURE_UNIT_INDEX);
         //    m_lightingTech.SetSpecularExponentTextureUnit(SPECULAR_EXPONENT_UNIT_INDEX);
 
-        if (!m_shadowMapTech.Init()) {
-            printf("Error initializing the shadow mapping technique\n");
-            exit(1);
-        }
+        // if (!m_shadowMapTech.Init()) {
+        //     printf("Error initializing the shadow mapping technique\n");
+        //     exit(1);
+        // }
     }
 
     void InitMesh()
@@ -313,15 +321,15 @@ private:
     }
 
     GLFWwindow* window = NULL;
-    LightingTechnique m_lightingTech;
-    ShadowMappingTechnique m_shadowMapTech;
+    BasicLightingTechnique m_lightingTech;
+    // ShadowMappingTechnique m_shadowMapTech;
     BasicCamera* m_pGameCamera = NULL;
     BasicMesh* m_pMesh1 = NULL;
     BasicMesh* m_pTerrain = NULL;
     PersProjInfo persProjInfo;
     Matrix4f m_lightPersProjMatrix;
     SpotLight m_spotLight;
-    Framebuffer m_shadowMapFBO;
+    // Framebuffer m_shadowMapFBO;
     Vector3f m_cameraPos;
     Vector3f m_cameraTarget;
     bool m_cameraOnLight = false;
